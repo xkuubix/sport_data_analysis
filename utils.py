@@ -110,7 +110,8 @@ def correct_dtype(data):
         data["Experience_main_sport"] = data["Experience_main_sport"].astype(float)
     if 'Maturity_Offset' in data.columns:
         data["Maturity_Offset"] = data["Maturity_Offset"].astype(float)
-
+    if 'Sports_Specialization_ordinal' in data.columns:
+        data["Sports_Specialization_ordinal"] = data["Sports_Specialization_ordinal"].astype(float)
     return data
 
 
