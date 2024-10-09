@@ -112,6 +112,24 @@ def correct_dtype(data):
         data["Maturity_Offset"] = data["Maturity_Offset"].astype(float)
     if 'Sports_Specialization_ordinal' in data.columns:
         data["Sports_Specialization_ordinal"] = data["Sports_Specialization_ordinal"].astype(float)
+    
+    if 'PS_L_PEAK_FORCE' in data.columns:
+        data['PS_L_PEAK_FORCE'] = data['PS_L_PEAK_FORCE'].astype(float)
+    if 'PS_R_PEAK_FORCE' in data.columns:
+        data['PS_R_PEAK_FORCE'] = data['PS_R_PEAK_FORCE'].astype(float)
+    if 'CZ_L_PEAK_FORCE' in data.columns:
+        data['CZ_L_PEAK_FORCE'] = data['CZ_L_PEAK_FORCE'].astype(float)
+    if 'CZ_R_PEAK_FORCE' in data.columns:
+        data['CZ_R_PEAK_FORCE'] = data['CZ_R_PEAK_FORCE'].astype(float)
+    if 'DW_L_PEAK_FORCE' in data.columns:
+        data['DW_L_PEAK_FORCE'] = data['DW_L_PEAK_FORCE'].astype(float)
+    if 'DW_R_PEAK_FORCE' in data.columns:
+        data['DW_R_PEAK_FORCE'] = data['DW_R_PEAK_FORCE'].astype(float)
+    if 'BR_L_PEAK_FORCE' in data.columns:
+        data['BR_L_PEAK_FORCE'] = data['BR_L_PEAK_FORCE'].astype(float)
+    if 'BR_R_PEAK_FORCE' in data.columns:
+        data['BR_R_PEAK_FORCE'] = data['BR_R_PEAK_FORCE'].astype(float)
+    
     return data
 
 
