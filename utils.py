@@ -49,8 +49,8 @@ def rename_columns(data):
     data.rename(columns={'PŚ_P PEAK FORCE (KG) Normalized to body weight Raw': 'PS_R_PEAK_FORCE'}, inplace=True)
     data.rename(columns={'CZ_L PEAK FORCE (KG) Normalized to body weight Raw': 'CZ_L_PEAK_FORCE'}, inplace=True)
     data.rename(columns={'CZ_P PEAK FORCE (KG) Normalized to body weight Raw': 'CZ_R_PEAK_FORCE'}, inplace=True)
-    data.rename(columns={'DW_L PEAK FORCE(KG) Normalized to body weight Raw': 'CZ_L_PEAK_FORCE'}, inplace=True)
-    data.rename(columns={'DW_P PEAK FORCE (KG) Normalized to body weight Raw': 'CZ_R_PEAK_FORCE'}, inplace=True)
+    data.rename(columns={'DW_L PEAK FORCE(KG) Normalized to body weight Raw':  'DW_L_PEAK_FORCE'}, inplace=True)
+    data.rename(columns={'DW_P PEAK FORCE (KG) Normalized to body weight Raw': 'DW_R_PEAK_FORCE'}, inplace=True)
     data.rename(columns={'BR_L PEAK FORCE (KG) Normalized to body weight Raw': 'BR_L_PEAK_FORCE'}, inplace=True)
     data.rename(columns={'BR_P_PEAK_FORCE_(KG)_Normalized_to_body_weight Raw': 'BR_R_PEAK_FORCE'}, inplace=True)
     columns_after = [col for col in data.columns]
