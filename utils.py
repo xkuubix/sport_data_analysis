@@ -98,37 +98,32 @@ def erase_rows(data):
 
 def correct_dtype(data):
     logger.info('Correcting data types object -> float')
-    if 'Training_Volume_Weekly_ALLSports' in data.columns:
-        data["Training_Volume_Weekly_ALLSports"] = data["Training_Volume_Weekly_ALLSports"].astype(float)
-    if 'Training_Volume_Weekly_MainSport' in data.columns:
-        data["Training_Volume_Weekly_MainSport"] = data["Training_Volume_Weekly_MainSport"].astype(float)
-    if 'Age_started_main_sport' in data.columns:
-        data["Age_started_main_sport"] = data["Age_started_main_sport"].astype(float)
-    if 'Chronologic_Age' in data.columns:
-        data["Chronologic_Age"] = data["Chronologic_Age"].astype(float)
-    if 'Experience_main_sport' in data.columns:
-        data["Experience_main_sport"] = data["Experience_main_sport"].astype(float)
-    if 'Maturity_Offset' in data.columns:
-        data["Maturity_Offset"] = data["Maturity_Offset"].astype(float)
-    if 'Sports_Specialization_ordinal' in data.columns:
-        data["Sports_Specialization_ordinal"] = data["Sports_Specialization_ordinal"].astype(float)
     
-    if 'PS_L_PEAK_FORCE' in data.columns:
-        data['PS_L_PEAK_FORCE'] = data['PS_L_PEAK_FORCE'].astype(float)
-    if 'PS_R_PEAK_FORCE' in data.columns:
-        data['PS_R_PEAK_FORCE'] = data['PS_R_PEAK_FORCE'].astype(float)
-    if 'CZ_L_PEAK_FORCE' in data.columns:
-        data['CZ_L_PEAK_FORCE'] = data['CZ_L_PEAK_FORCE'].astype(float)
-    if 'CZ_R_PEAK_FORCE' in data.columns:
-        data['CZ_R_PEAK_FORCE'] = data['CZ_R_PEAK_FORCE'].astype(float)
-    if 'DW_L_PEAK_FORCE' in data.columns:
-        data['DW_L_PEAK_FORCE'] = data['DW_L_PEAK_FORCE'].astype(float)
-    if 'DW_R_PEAK_FORCE' in data.columns:
-        data['DW_R_PEAK_FORCE'] = data['DW_R_PEAK_FORCE'].astype(float)
-    if 'BR_L_PEAK_FORCE' in data.columns:
-        data['BR_L_PEAK_FORCE'] = data['BR_L_PEAK_FORCE'].astype(float)
-    if 'BR_R_PEAK_FORCE' in data.columns:
-        data['BR_R_PEAK_FORCE'] = data['BR_R_PEAK_FORCE'].astype(float)
+    columns_to_convert = [
+        'Training_Volume_Weekly_ALLSports', 'Training_Volume_Weekly_MainSport',
+        'Age_started_main_sport', 'Chronologic_Age', 'Experience_main_sport',
+        'Maturity_Offset', 'Sports_Specialization_ordinal'
+    ]
+    for col in columns_to_convert:
+        if col in data.columns:
+            data[col] = data[col].astype(float)
+
+    peak_force_columns = [
+        'PS_L_PEAK_FORCE', 'PS_R_PEAK_FORCE', 'CZ_L_PEAK_FORCE', 'CZ_R_PEAK_FORCE',
+        'DW_L_PEAK_FORCE', 'DW_R_PEAK_FORCE', 'BR_L_PEAK_FORCE', 'BR_R_PEAK_FORCE'
+    ]
+    for col in peak_force_columns:
+        if col in data.columns:
+            data[col] = data[col].astype(float)
+
+    ybt_columns = [
+        'YBT_ANT_L_Normalized', 'YBT_ANT_R_Normalized', 'YBT_PM_L_Normalized',
+        'YBT_PM_R_Normalized', 'YBT_PL_L_Normalized', 'YBT_PL_R_Normalized',
+        'YBT_COMPOSITE_R', 'YBT_COMPOSITE_L']
+    for col in ybt_columns:
+        if col in data.columns:
+            if data[col].dtype == 'object':
+                data[col] = data[col].apply(pd.to_numeric, errors='coerce')
     
     return data
 
