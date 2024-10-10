@@ -59,8 +59,8 @@ HHD = [
     'PS_R_PEAK_FORCE',
     'CZ_L_PEAK_FORCE',
     'CZ_R_PEAK_FORCE',
-    'CZ_L_PEAK_FORCE',
-    'CZ_R_PEAK_FORCE',
+    'DW_L_PEAK_FORCE',
+    'DW_R_PEAK_FORCE',
     'BR_L_PEAK_FORCE',
     'BR_R_PEAK_FORCE'
     ]
@@ -87,7 +87,7 @@ def process_data(d):
     d = utils.recover_missing(d, 'BMI')
     d = utils.recover_missing(d, 'PHV')
     utils.print_columns(d)
-    # d = d[d['Pain_now'] == 0] # do not consider people with pain
+    d = d[d['Pain_now'] == 0] # do not consider people with pain
     d = d.dropna()
     return d
 
@@ -130,7 +130,141 @@ lengths = (
     len(data_YBT_FMS),
     len(data_HDD_YBT_FMS)
 )
-venn = venn3(subsets=lengths, set_labels=('HDD', 'YBT', 'FMS'))
+venn = venn3(subsets=lengths, set_labels=('HHD', 'YBT', 'FMS'))
 plt.title('Liczba "pełnych" sportowców w poszczególnych testach/kombinacjach')
 plt.show()
+
+
+# %%
+
+'''
+Hipotezy związane ze Sports Performance (YBT,HHD,FMS)
+H1 - Zawodnicy z wysoką specjalizacją (High) będą wykazywać niższe wyniki w Sports Performance Tests
+dla dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
+
+H2 - Zawodnicy trenujący mniej główny sport („Training_Volume_Weekly_MainSport (hrs)”)
+i wszystkie sporty „Training_Volume_Weekly_ALLsports(hrs)” będą wykazywać niższe wyniki
+w Sports Performance Tests dla dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
+
+H3 - Zawodnicy trenujący więcej niż mają lat (Athletes who participated in their primary sport
+for more hours per week than their age (Yes/No) = Yes) będą wykazywać niższe wyniki w Sports Performance Tests
+dla dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
+
+H4 - Zawodnicy z historią urazów mają niższe wyniki w Sports Performance Tests dla
+dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
+
+H5 - Zawodnicy z niższymi wartościami jakości zdrowia („QoL - EQ-5D-Y”) wykażą niższe wyniki w
+Sports Performance Tests dla dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
+
+H6 - Zawodnicy młodsi (Chronologic_Age) i mniej dojrzali biologicznie (maturity_offset)
+będą mieli niższe wyniki w Sports Performance Test dla dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
+
+----------------------------------------------------------
+
+Jeśli analizujemy zmienne = Sport Performance Tests (YBT, HHD) to
+-> należy przypisać kończynę (zmienna = Dominant_extremity) uczestnika do wyników (YBT,HHD)
+(czyli jeśli dominant = left, to left YBT i left HHD)
+
+Jeśli analizujemy zmienne = objętość treningowa razem z Injury_History (yes = 1, no = 0)
+-> wykluczenie uczestników z „Pain_Now” = 1
+
+'''
+
+# %%
+
+# Create new columns based on the dominant extremity
+def assign_dominant_extremity(row, left_col, right_col):
+    return row[left_col] if row['Dominant_extremity'] == 'Left' else row[right_col]
+
+
+data_HDD['PS_DOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, left_col='PS_L_PEAK_FORCE', right_col='PS_R_PEAK_FORCE', axis=1)
+data_HDD['CZ_DOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, left_col='CZ_L_PEAK_FORCE', right_col='CZ_R_PEAK_FORCE', axis=1)
+data_HDD['DW_DOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, left_col='DW_L_PEAK_FORCE', right_col='DW_R_PEAK_FORCE', axis=1)
+data_HDD['BR_DOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, left_col='BR_L_PEAK_FORCE', right_col='BR_R_PEAK_FORCE', axis=1)
+
+
+
+data_YBT['YBT_ANT_DOMINANT'] = data_YBT.apply(assign_dominant_extremity, left_col='YBT_ANT_L_Normalized', right_col='YBT_ANT_R_Normalized', axis=1)
+data_YBT['YBT_PM_DOMINANT'] = data_YBT.apply(assign_dominant_extremity, left_col='YBT_PM_L_Normalized', right_col='YBT_PM_R_Normalized', axis=1)
+data_YBT['YBT_PL_DOMINANT'] = data_YBT.apply(assign_dominant_extremity, left_col='YBT_PL_L_Normalized', right_col='YBT_PL_R_Normalized', axis=1)
+data_YBT['YBT_COMPOSITE_DOMINANT'] = data_YBT.apply(assign_dominant_extremity, left_col='YBT_COMPOSITE_L', right_col='YBT_COMPOSITE_R', axis=1)
+
+data_YBT['YBT_ANT_NONDOMINANT'] = data_YBT.apply(assign_dominant_extremity, right_col='YBT_ANT_L_Normalized', left_col='YBT_ANT_R_Normalized', axis=1)
+data_YBT['YBT_PM_NONDOMINANT'] = data_YBT.apply(assign_dominant_extremity, right_col='YBT_PM_L_Normalized', left_col='YBT_PM_R_Normalized', axis=1)
+data_YBT['YBT_PL_NONDOMINANT'] = data_YBT.apply(assign_dominant_extremity, right_col='YBT_PL_L_Normalized', left_col='YBT_PL_R_Normalized', axis=1)
+data_YBT['YBT_COMPOSITE_NONDOMINANT'] = data_YBT.apply(assign_dominant_extremity, right_col='YBT_COMPOSITE_L', left_col='YBT_COMPOSITE_R', axis=1)
+
+
+
+# %%
+# Hypothesis 1
+# H1 - Zawodnicy z wysoką specjalizacją (High) będą wykazywać
+#  niższe wyniki w Sports Performance Tests
+sns.set_theme(style="ticks", palette="pastel")
+
+fig, axes = plt.subplots(4, 1, figsize=(10, 10))
+
+df_melted = data_YBT.melt(id_vars='Sports_Specialization',
+                          value_vars=['YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT'],
+                          var_name='Dominant Extremity', value_name='Score')
+
+sns.boxplot(ax=axes[0], x='Sports_Specialization', y='Score',
+            hue='Dominant Extremity',
+            data=df_melted, showfliers=False,
+            palette=["m", "g"], order=['low', 'moderate', 'high'])
+axes[0].yaxis.set_label_text('YBT ANT')
+
+df_melted = data_YBT.melt(id_vars='Sports_Specialization',
+                          value_vars=['YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT'],
+                          var_name='Dominant Extremity', value_name='Score')
+
+sns.boxplot(ax=axes[1], x='Sports_Specialization', y='Score',
+            hue='Dominant Extremity',
+            data=df_melted, showfliers=False,
+            palette=["m", "g"], order=['low', 'moderate', 'high'])
+axes[1].yaxis.set_label_text('YBT PM')
+
+df_melted = data_YBT.melt(id_vars='Sports_Specialization',
+                          value_vars=['YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT'],
+                          var_name='Dominant Extremity', value_name='Score')
+
+sns.boxplot(ax=axes[2], x='Sports_Specialization', y='Score',
+            hue='Dominant Extremity',
+            data=df_melted, showfliers=False,
+            palette=["m", "g"], order=['low', 'moderate', 'high'])
+axes[2].yaxis.set_label_text('YBT PL')
+
+df_melted = data_YBT.melt(id_vars='Sports_Specialization',
+                          value_vars=['YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT'],
+                          var_name='Dominant Extremity', value_name='Score')
+
+sns.boxplot(ax=axes[3], x='Sports_Specialization', y='Score',
+            hue='Dominant Extremity',
+            data=df_melted, showfliers=False,
+            palette=["m", "g"], order=['low', 'moderate', 'high'])
+axes[3].yaxis.set_label_text('YBT COMP')
+
+for ax in axes:
+    ax.get_legend().remove()
+    ax.get_xaxis().get_label().set_visible(False)
+
+# Add a single legend at the bottom of all subplots
+handles, _ = axes[0].get_legend_handles_labels()  # Get the handles and labels from one of the plots
+labels = ['Dominant', 'Nondominant']
+fig.legend(handles, labels, loc='lower center', title= 'Extremity',
+           ncol=3, bbox_to_anchor=(0.5, 1), frameon=False)
+
+# Adjust the layout to make room for the legend
+plt.tight_layout(rect=[0, 0.03, 1, 1])  # Adjust the bottom space to fit the legend
+[ax.set_xticklabels([]) for ax in axes[:-1]]
+
+axes[3].get_xaxis().get_label().set_visible(True)
+axes[3].set_xlabel('Sports Specialization')
+plt.tight_layout()
+plt.show()
+
+
+# %%
+
+
 # %%
