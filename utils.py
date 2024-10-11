@@ -124,6 +124,9 @@ def correct_dtype(data):
         if col in data.columns:
             if data[col].dtype == 'object':
                 data[col] = data[col].apply(pd.to_numeric, errors='coerce')
+
+    if "Injury_History_MoreThanOne (0=no,1=yes)":
+        data['Injury_History_MoreThanOne (0=no,1=yes)'] = data['Injury_History_MoreThanOne (0=no,1=yes)'].map({'1': 'Yes', '': 'No'})
     
     return data
 
