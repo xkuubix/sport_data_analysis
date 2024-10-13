@@ -9,6 +9,8 @@ import warnings
 import logging
 import utils
 from matplotlib_venn import venn3
+from sklearn.linear_model import LinearRegression, HuberRegressor
+import numpy as np
 # %%
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -97,8 +99,8 @@ def process_data(d):
 data_pure = data[columns_to_get]
 data_pure = process_data(data_pure)
 
-data_HDD = data[columns_to_get + HHD]
-data_HDD = process_data(data_HDD)
+data_HHD = data[columns_to_get + HHD]
+data_HHD = process_data(data_HHD)
 
 data_YBT = data[columns_to_get + YBT]
 data_YBT = process_data(data_YBT)
@@ -106,17 +108,17 @@ data_YBT = process_data(data_YBT)
 data_FMS = data[columns_to_get + FMS]
 data_FMS = process_data(data_FMS)
 
-data_HDD_YBT = data[columns_to_get + HHD + YBT]
-data_HDD_YBT = process_data(data_HDD_YBT)
+data_HHD_YBT = data[columns_to_get + HHD + YBT]
+data_HHD_YBT = process_data(data_HHD_YBT)
 
-data_HDD_FMS = data[columns_to_get + HHD + FMS]
-data_HDD_FMS = process_data(data_HDD_FMS)
+data_HHD_FMS = data[columns_to_get + HHD + FMS]
+data_HHD_FMS = process_data(data_HHD_FMS)
 
 data_YBT_FMS = data[columns_to_get + YBT + FMS]
 data_YBT_FMS = process_data(data_YBT_FMS)
 
-data_HDD_YBT_FMS = data[columns_to_get + HHD + YBT + FMS]
-data_HDD_YBT_FMS = process_data(data_HDD_YBT_FMS)
+data_HHD_YBT_FMS = data[columns_to_get + HHD + YBT + FMS]
+data_HHD_YBT_FMS = process_data(data_HHD_YBT_FMS)
 
 # %%
 # Plot Venn Diagram
@@ -124,13 +126,13 @@ data_HDD_YBT_FMS = process_data(data_HDD_YBT_FMS)
 # A tuple with 7 numbers, denoting the sizes of the regions in the following order:
 # (100, 010, 110, 001, 101, 011, 111).
 lengths = (
-    len(data_HDD),
+    len(data_HHD),
     len(data_YBT),
-    len(data_HDD_YBT),
+    len(data_HHD_YBT),
     len(data_FMS),
-    len(data_HDD_FMS),
+    len(data_HHD_FMS),
     len(data_YBT_FMS),
-    len(data_HDD_YBT_FMS)
+    len(data_HHD_YBT_FMS)
 )
 venn = venn3(subsets=lengths, set_labels=('HHD', 'YBT', 'FMS'))
 plt.title('Liczba "pełnych" sportowców w poszczególnych testach/kombinacjach')
@@ -179,15 +181,15 @@ def assign_dominant_extremity(row, left_col, right_col):
     return row[left_col] if row['Dominant_extremity'] == 'Left' else row[right_col]
 
 
-data_HDD['PS_DOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, left_col='PS_L_PEAK_FORCE', right_col='PS_R_PEAK_FORCE', axis=1)
-data_HDD['CZ_DOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, left_col='CZ_L_PEAK_FORCE', right_col='CZ_R_PEAK_FORCE', axis=1)
-data_HDD['DW_DOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, left_col='DW_L_PEAK_FORCE', right_col='DW_R_PEAK_FORCE', axis=1)
-data_HDD['BR_DOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, left_col='BR_L_PEAK_FORCE', right_col='BR_R_PEAK_FORCE', axis=1)
+data_HHD['PS_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='PS_L_PEAK_FORCE', right_col='PS_R_PEAK_FORCE', axis=1)
+data_HHD['CZ_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='CZ_L_PEAK_FORCE', right_col='CZ_R_PEAK_FORCE', axis=1)
+data_HHD['DW_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='DW_L_PEAK_FORCE', right_col='DW_R_PEAK_FORCE', axis=1)
+data_HHD['BR_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='BR_L_PEAK_FORCE', right_col='BR_R_PEAK_FORCE', axis=1)
 
-data_HDD['PS_NONDOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, right_col='PS_L_PEAK_FORCE', left_col='PS_R_PEAK_FORCE', axis=1)
-data_HDD['CZ_NONDOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, right_col='CZ_L_PEAK_FORCE', left_col='CZ_R_PEAK_FORCE', axis=1)
-data_HDD['DW_NONDOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, right_col='DW_L_PEAK_FORCE', left_col='DW_R_PEAK_FORCE', axis=1)
-data_HDD['BR_NONDOMINANT_PEAK_FORCE'] = data_HDD.apply(assign_dominant_extremity, right_col='BR_L_PEAK_FORCE', left_col='BR_R_PEAK_FORCE', axis=1)
+data_HHD['PS_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='PS_L_PEAK_FORCE', left_col='PS_R_PEAK_FORCE', axis=1)
+data_HHD['CZ_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='CZ_L_PEAK_FORCE', left_col='CZ_R_PEAK_FORCE', axis=1)
+data_HHD['DW_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='DW_L_PEAK_FORCE', left_col='DW_R_PEAK_FORCE', axis=1)
+data_HHD['BR_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='BR_L_PEAK_FORCE', left_col='BR_R_PEAK_FORCE', axis=1)
 
 
 data_YBT['YBT_ANT_DOMINANT'] = data_YBT.apply(assign_dominant_extremity, left_col='YBT_ANT_L_Normalized', right_col='YBT_ANT_R_Normalized', axis=1)
@@ -256,7 +258,7 @@ create_boxplot_4row(
     x_label='Sports Specialization'
 )
 create_boxplot_4row(
-    data=data_HDD, 
+    data=data_HHD, 
     id_var='Sports_Specialization', 
     value_vars_list=[
         ['PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE'],
@@ -264,7 +266,7 @@ create_boxplot_4row(
         ['DW_DOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE'],
         ['BR_DOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE']
     ], 
-    row_labels=['HDD PS', 'HDD CZ', 'HDD DW', 'HDD BR'], 
+    row_labels=['HHD PS', 'HHD CZ', 'HHD DW', 'HHD BR'], 
     hue_label='Dominant Extremity', 
     legend_labels=['Dominant', 'Nondominant'], 
     palette=["m", "g"], 
@@ -291,12 +293,12 @@ plt.show()
 # w Sports Performance Tests dla dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
 
 
-def ybt_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel):
+def ybt_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel, precision=0):
     data_YBT = data
 # Cut dataframe into 4 equal bins based on x and name the ranges with numeric stats
     bins = pd.cut(data_YBT[x], bins=4, include_lowest=True)
-    bin_labels = [f"{round(b.left, 1)}-{round(b.right, 1)}" for b in bins.cat.categories]
-    bin_labels[0] = str(min(data_YBT[x])) + bin_labels[0][3:]
+    bin_labels = [f"{b.left:.{precision}f}-{b.right:.{precision}f}" for b in bins.cat.categories]
+    bin_labels[0] = f"{min(data_YBT[x]):.{precision}f}" + "-" + str(bin_labels[0].split('-')[1])
     #\2013 for n-dash (number ranges), \u2014 for m-dash
     bin_labels = [f"{b}".replace('-', '\u2013') for b in bin_labels]
 
@@ -319,6 +321,8 @@ def ybt_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel):
     upper_lim = math.ceil(max(ylim_ax0[1], ylim_ax1[1]))
     lower_lim = math.floor(min(ylim_ax0[0], ylim_ax1[0]))
 
+    if upper_lim <= 10:
+        upper_lim = max(ylim_ax0[1], ylim_ax1[1])*1.1
 
     # Remove individual x-axis labels
     axes[0].set_xlabel('')
@@ -374,11 +378,11 @@ ybt_box_plot(data_YBT, x=x,
 
 # %%
 #FMS
-def fms_box_plot(data, x, y, title, xlabel, ylabel):
+def fms_box_plot(data, x, y, title, xlabel, ylabel, precision=0):
     data_FMS = data
-    bins = pd.cut(data_FMS[x], bins=4, include_lowest=True)
-    bin_labels = [f"{round(b.left, 2)}-{round(b.right, 2)}" for b in bins.cat.categories]
-    bin_labels[0] = f"{min(data_FMS[x]):.2f}" + bin_labels[0][4:]
+    bins = pd.cut(data_YBT[x], bins=4, include_lowest=True)
+    bin_labels = [f"{b.left:.{precision}f}-{b.right:.{precision}f}" for b in bins.cat.categories]
+    bin_labels[0] = f"{min(data_YBT[x]):.{precision}f}" + "-" + str(bin_labels[0].split('-')[1])
     bin_labels = [f"{b}".replace('-', '\u2013') for b in bin_labels]
     for b in bins.cat.categories:
         print(b)
@@ -409,6 +413,316 @@ xlabel = 'Training Volume All Sports [hrs/week]'
 ylabel = 'FMS Total Score'
 
 fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
-#%%
+
 
 # %%
+#make linear plot
+
+def linear_plot(data, x, y1, y2, xlabel, ylabel1, ylabel2, title1, title2):
+    # sns.set_theme(style="darkgrid")
+    X = data[[x]].values.reshape(-1, 1)
+    Y1 = data[y1].values
+    Y2 = data[y2].values
+
+    model1 = HuberRegressor()
+    model1.fit(X, Y1)
+    predictions1 = model1.predict(X)
+    coef1 = model1.coef_[0]
+    intercept1 = model1.intercept_
+
+    model2 = HuberRegressor()
+    model2.fit(X, Y2)
+    predictions2 = model2.predict(X)
+    coef2 = model2.coef_[0]
+    intercept2 = model2.intercept_
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+    sns.scatterplot(x=X.flatten(), y=Y1, ax=axes[0], color='blue', label='Data points')
+    sns.lineplot(x=X.flatten(), y=predictions1, ax=axes[0], color='red', label=f'Linear fit: y = {coef1:.2f}x + {intercept1:.2f}')
+    axes[0].set_ylabel(ylabel1)
+    axes[0].set_title(title1)
+    axes[0].legend()
+    axes[0].grid(True)
+
+    sns.scatterplot(x=X.flatten(), y=Y2, ax=axes[1], color='blue', label='Data points')
+    sns.lineplot(x=X.flatten(), y=predictions2, ax=axes[1], color='red', label=f'Linear fit: y = {coef2:.2f}x + {intercept2:.2f}')
+    axes[1].set_ylabel(ylabel2)
+    axes[1].set_title(title2)
+    axes[1].legend()
+    axes[1].grid(True)
+
+    axes[0].set_xlabel('')
+    axes[1].set_xlabel('')
+    fig.supxlabel(xlabel)
+    ylim_ax0 = axes[0].get_ylim()
+    ylim_ax1 = axes[1].get_ylim()
+    upper_lim = math.ceil(max(ylim_ax0[1], ylim_ax1[1]))
+    lower_lim = math.floor(min(ylim_ax0[0], ylim_ax1[0]))
+    for ax in axes:
+        ax.set_ylim([lower_lim, upper_lim])
+        ax.grid
+    
+    plt.tight_layout()
+    plt.show()
+
+    print(f'Coefficient for {y1}: {coef1:.2f}')
+    print(f'Intercept for {y1}: {intercept1:.2f}')
+    print(f'Coefficient for {y2}: {coef2:.2f}')
+    print(f'Intercept for {y2}: {intercept2:.2f}')
+
+linear_plot(data_YBT, x='Training_Volume_Weekly_ALLSports', y1='YBT_ANT_DOMINANT', y2='YBT_ANT_NONDOMINANT', 
+            xlabel='Training Volume All Sports [hrs/week]', ylabel1='YBT ANT', ylabel2='YBT ANT', 
+            title1='',
+            title2='')
+linear_plot(data_YBT, x='Training_Volume_Weekly_ALLSports', y1='YBT_PM_DOMINANT', y2='YBT_PM_NONDOMINANT', 
+            xlabel='Training Volume All Sports [hrs/week]', ylabel1='YBT PM', ylabel2='YBT PM', 
+            title1='',
+            title2='')
+linear_plot(data_YBT, x='Training_Volume_Weekly_ALLSports', y1='YBT_PL_DOMINANT', y2='YBT_PL_NONDOMINANT', 
+            xlabel='Training Volume All Sports [hrs/week]', ylabel1='YBT PL', ylabel2='YBT PL', 
+            title1='',
+            title2='')
+linear_plot(data_YBT, x='Training_Volume_Weekly_ALLSports', y1='YBT_COMPOSITE_DOMINANT', y2='YBT_COMPOSITE_NONDOMINANT', 
+            xlabel='Training Volume All Sports [hrs/week]', ylabel1='YBT COMP', ylabel2='YBT COMP', 
+            title1='',
+            title2='')
+# %%
+
+linear_plot(data_YBT, x='Training_Volume_Weekly_MainSport', y1='YBT_ANT_DOMINANT', y2='YBT_ANT_NONDOMINANT', 
+            xlabel='Training Volume Main Sport [hrs/week]', ylabel1='YBT ANT', ylabel2='YBT ANT', 
+            title1='',
+            title2='')
+linear_plot(data_YBT, x='Training_Volume_Weekly_MainSport', y1='YBT_PM_DOMINANT', y2='YBT_PM_NONDOMINANT', 
+            xlabel='Training Volume Main Sport [hrs/week]', ylabel1='YBT PM', ylabel2='YBT PM', 
+            title1='',
+            title2='')
+linear_plot(data_YBT, x='Training_Volume_Weekly_MainSport', y1='YBT_PL_DOMINANT', y2='YBT_PL_NONDOMINANT', 
+            xlabel='Training Volume Main Sport [hrs/week]', ylabel1='YBT PL', ylabel2='YBT PL', 
+            title1='',
+            title2='')
+linear_plot(data_YBT, x='Training_Volume_Weekly_MainSport', y1='YBT_COMPOSITE_DOMINANT', y2='YBT_COMPOSITE_NONDOMINANT', 
+            xlabel='Training Volume Main Sport [hrs/week]', ylabel1='YBT COMP', ylabel2='YBT COMP', 
+            title1='',
+            title2='')
+
+
+# %%
+def linear_plot_fms(data, x, y, xlabel, ylabel, title):
+    # sns.set_theme(style="darkgrid")
+    X = data[[x]].values.reshape(-1, 1)
+    Y = data[y].values
+
+    model = HuberRegressor()
+    model.fit(X, Y)
+    predictions = model.predict(X)
+    coef = model.coef_[0]
+    intercept = model.intercept_
+
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(x=X.flatten(), y=Y, color='blue', label='Data points')
+    sns.lineplot(x=X.flatten(), y=predictions, color='red', label=f'Linear fit: y = {coef:.2f}x + {intercept:.2f}')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+    print(f'Coefficient: {coef:.2f}')
+    print(f'Intercept: {intercept:.2f}')
+
+linear_plot_fms(data_FMS, x='Training_Volume_Weekly_ALLSports', y='FMS_TOTAL', 
+                xlabel='Training Volume All Sports [hrs/week]', ylabel='FMS Total Score', 
+                title='')
+linear_plot_fms(data_FMS, x='Training_Volume_Weekly_MainSport', y='FMS_TOTAL', 
+                xlabel='Training Volume Main Sport [hrs/week]', ylabel='FMS Total Score', 
+                title='')
+#%%
+# Hypothesis 3
+#H3 – Zawodnicy trenujący więcej niż mają lat (Athletes who participated in their primary sport
+# for more hours per week than their age (Yes/No) = Yes) będą wykazywać niższe wyniki w
+# Sports Performance Tests dla dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
+def plot_dominant_vs_nondominant(data, x, y_vars, ylabels, xlabel, hue_label):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 12))
+
+    for i, ax in enumerate(axes.flat):
+        df_melted = data.melt(id_vars=[x],
+                              value_vars=[y_vars[2*i], y_vars[2*i+1]],
+                              var_name=hue_label, value_name='Score')
+
+        sns.boxplot(x=x, y='Score', hue=hue_label, data=df_melted, ax=ax, showfliers=False,
+                    gap=0.5, order=['No', 'Yes'])
+        sns.stripplot(x=x, y='Score', hue=hue_label, data=df_melted, ax=ax,
+                      color=".3", dodge=True)
+        ax.set_ylabel(ylabels[i])
+        ax.set_xlabel('')
+        ax.grid(axis='y')
+        ax.legend().remove()
+
+    handles, _ = axes[0, 0].get_legend_handles_labels()  # Get handles and labels from one of the plots
+    fig.legend(handles, ['Dominant', 'Nondominant'], loc='lower center', title=hue_label,
+               ncol=2, bbox_to_anchor=(0.5, 1), frameon=False)
+    fig.supxlabel(xlabel)
+    plt.tight_layout()
+    plt.show()
+
+y_vars = [
+    'YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT',
+    'YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT',
+    'YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT',
+    'YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT'
+]
+xlabel = 'Athletes who participated in their primary sport for more hours per week than their age (Yes/No)'
+ylabels = ['YBT ANT', 'YBT PM', 'YBT PL', 'YBT COMP']
+plot_dominant_vs_nondominant(data_YBT, x='Hours_per_week>Age',
+                             y_vars=y_vars, ylabels=ylabels,
+                             xlabel=xlabel,
+                             hue_label='Dominant Extremity')
+# %%
+y_vars = ['PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE',
+            'CZ_DOMINANT_PEAK_FORCE', 'CZ_NONDOMINANT_PEAK_FORCE',
+            'DW_DOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE',
+            'BR_DOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE']
+
+ylabels = ['HHD PS', 'HHD CZ', 'HHD DW', 'HHD BR']
+plot_dominant_vs_nondominant(data_HHD, x='Hours_per_week>Age',
+                             y_vars=y_vars, ylabels=ylabels,
+                             xlabel=xlabel,
+                             hue_label='Dominant Extremity')
+# %%
+fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+sns.boxplot(x='Hours_per_week>Age', y='FMS_TOTAL', data=data_FMS, ax=ax)
+sns.stripplot(x='Hours_per_week>Age', y='FMS_TOTAL', data=data_FMS, color=".3", ax=ax)
+plt.xlabel(xlabel)
+plt.ylabel('FMS Total Score')
+plt.tight_layout()
+ax.grid(axis='y')
+plt.show()
+# %%
+# Hypothesis 4
+
+# H4 - Zawodnicy z historią urazów mają niższe wyniki w Sports Performance Tests dla
+# dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
+
+y_vars = ['YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT',
+            'YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT',
+            'YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT',
+            'YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT']
+
+ylabels = ['YBT ANT', 'YBT PM', 'YBT PL', 'YBT COMP']
+
+plot_dominant_vs_nondominant(data_YBT, x='Injury_History',
+                             y_vars=y_vars, ylabels=ylabels,
+                             xlabel='Injury History (Yes/No)',
+                             hue_label='Dominant Extremity')
+
+
+plot_dominant_vs_nondominant(data_YBT, x='Injury_History_MoreThanOne (0=no,1=yes)',
+                                y_vars=y_vars, ylabels=ylabels,
+                                xlabel='Injury History More Than One (Yes/No)',
+                                hue_label='Dominant Extremity')
+
+y_vars = ['PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE',
+            'CZ_DOMINANT_PEAK_FORCE', 'CZ_NONDOMINANT_PEAK_FORCE',
+            'DW_DOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE',
+            'BR_DOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE']
+
+ylabels = ['HHD PS', 'HHD CZ', 'HHD DW', 'HHD BR']
+plot_dominant_vs_nondominant(data_HHD, x='Injury_History',
+                             y_vars=y_vars, ylabels=ylabels,
+                             xlabel='Injury History (Yes/No)',
+                             hue_label='Dominant Extremity')
+
+# %%
+fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+sns.boxplot(x='Injury_History', y='FMS_TOTAL', data=data_FMS, ax=ax, order=['No', 'Yes'])
+sns.stripplot(x='Injury_History', y='FMS_TOTAL', data=data_FMS, color=".3", ax=ax)
+plt.xlabel('Injury History (Yes/No)')
+plt.ylabel('FMS Total Score')
+plt.tight_layout()
+ax.grid(axis='y')
+plt.show()
+
+# %%
+fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+sns.boxplot(x='Injury_History_MoreThanOne (0=no,1=yes)', y='FMS_TOTAL', data=data_FMS, ax=ax, order=['No', 'Yes'])
+sns.stripplot(x='Injury_History_MoreThanOne (0=no,1=yes)', y='FMS_TOTAL', data=data_FMS, color=".3", ax=ax)
+plt.xlabel('Injury History More Than One (Yes/No)')
+plt.ylabel('FMS Total Score')
+plt.tight_layout()
+ax.grid(axis='y')
+plt.show()
+#%%
+#Hypothesis 6 (ommit 5 - no data)
+
+x = 'Chronologic_Age'
+xlabel = 'Chronologic Age [years]'
+
+
+ybt_box_plot(data_YBT, x=x,
+             y1='YBT_ANT_DOMINANT',
+             y2='YBT_ANT_NONDOMINANT',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='YBT ANT')
+ybt_box_plot(data_YBT, x=x,
+             y1='YBT_PM_DOMINANT',
+             y2='YBT_PM_NONDOMINANT',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='YBT PM')
+ybt_box_plot(data_YBT, x=x,
+             y1='YBT_PL_DOMINANT',
+             y2='YBT_PL_NONDOMINANT',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='YBT PL')
+ybt_box_plot(data_YBT, x=x,
+             y1='YBT_COMPOSITE_DOMINANT',
+             y2='YBT_COMPOSITE_NONDOMINANT',
+             title1=title1,
+             title2=title2, 
+             xlabel=xlabel,
+             ylabel='YBT COMP')
+# %%
+ybt_box_plot(data_HHD, x=x,
+             y1='PS_DOMINANT_PEAK_FORCE',
+             y2='PS_NONDOMINANT_PEAK_FORCE',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='HHD PS')
+ybt_box_plot(data_HHD, x=x,
+             y1='CZ_DOMINANT_PEAK_FORCE',
+             y2='CZ_NONDOMINANT_PEAK_FORCE',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='HHD CZ')
+ybt_box_plot(data_HHD, x=x,
+             y1='DW_DOMINANT_PEAK_FORCE',
+             y2='DW_NONDOMINANT_PEAK_FORCE',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='HHD DW')
+ybt_box_plot(data_HHD, x=x,
+             y1='BR_DOMINANT_PEAK_FORCE',
+             y2='BR_NONDOMINANT_PEAK_FORCE',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='HHD BR')
+
+#FMS
+fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
+
+# %%
+# # kryteria specjalizacji sportowej
+
+#get statistics
