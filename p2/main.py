@@ -293,27 +293,27 @@ plt.show()
 # w Sports Performance Tests dla dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
 
 
-def ybt_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel, precision=0):
-    data_YBT = data
-# Cut dataframe into 4 equal bins based on x and name the ranges with numeric stats
-    bins = pd.cut(data_YBT[x], bins=4, include_lowest=True)
-    bin_labels = [f"{b.left:.{precision}f}-{b.right:.{precision}f}" for b in bins.cat.categories]
-    bin_labels[0] = f"{min(data_YBT[x]):.{precision}f}" + "-" + str(bin_labels[0].split('-')[1])
-    #\2013 for n-dash (number ranges), \u2014 for m-dash
-    bin_labels = [f"{b}".replace('-', '\u2013') for b in bin_labels]
+def cat_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel, showfliers=False):
+    
+    # cut dataframe into bins based on x and name the ranges
+    median_value = data[x].median()
 
-    data_YBT['Training_Volume_Binned'] = pd.cut(data_YBT[x], bins=4,
-                                            labels=bin_labels, include_lowest=True)
+    bins=[data[x].min(), median_value, data[x].max()]
+    print(bins)
+    data['Training_Volume_Binned'] = pd.cut(data[x], bins=bins,
+                                            include_lowest=True,
+                                            labels=['<= Median', '> Median'])
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-
-    sns.boxplot(x='Training_Volume_Binned', y=y1, data=data_YBT, ax=axes[0])
-    sns.stripplot(x='Training_Volume_Binned', y=y1, data=data_YBT, ax=axes[0], color=".3")
+    print(data['Training_Volume_Binned'].value_counts())
+    # plot boxplot (no outliers cuz stirplot shows doubled points) and stripplot for each y variable
+    sns.boxplot(x='Training_Volume_Binned', y=y1, data=data, ax=axes[0], showfliers=showfliers)
+    sns.stripplot(x='Training_Volume_Binned', y=y1, data=data, ax=axes[0], color=".3")
     axes[0].set_title(title1)
     axes[0].set_ylabel(ylabel)
 
-    sns.boxplot(x='Training_Volume_Binned', y=y2, data=data_YBT, ax=axes[1])
-    sns.stripplot(x='Training_Volume_Binned', y=y2, data=data_YBT, ax=axes[1], color=".3")
+    sns.boxplot(x='Training_Volume_Binned', y=y2, data=data, ax=axes[1], showfliers=showfliers)
+    sns.stripplot(x='Training_Volume_Binned', y=y2, data=data, ax=axes[1], color=".3")
     axes[1].set_title(title2)
     axes[1].set_ylabel(ylabel)
     ylim_ax0 = axes[0].get_ylim()
@@ -329,6 +329,7 @@ def ybt_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel, precision=0):
     axes[1].set_xlabel('')
     
     # Set a shared x-axis label for the whole row
+    xlabel += f' (median:{median_value})'
     fig.supxlabel(xlabel)
 
     for ax in axes:
@@ -341,34 +342,34 @@ def ybt_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel, precision=0):
 title1 = 'Dominant Extremity'
 title2 = 'Non Dominant Extremity'
 
-x = 'Training_Volume_Weekly_ALLSports'
-xlabel = 'Training Volume All Sports [hrs/week]'
+# x = 'Training_Volume_Weekly_ALLSports'
+# xlabel = 'Training Volume All Sports [hrs/week]'
 
-# x = 'Training_Volume_Weekly_MainSport'
-# xlabel = 'Training Volume Main Sport [hrs/week]'
+x = 'Training_Volume_Weekly_MainSport'
+xlabel = 'Training Volume Main Sport [hrs/week]'
 
-ybt_box_plot(data_YBT, x=x,
+cat_box_plot(data_YBT, x=x,
              y1='YBT_ANT_DOMINANT',
              y2='YBT_ANT_NONDOMINANT',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
              ylabel='YBT ANT')
-ybt_box_plot(data_YBT, x=x,
+cat_box_plot(data_YBT, x=x,
              y1='YBT_PM_DOMINANT',
              y2='YBT_PM_NONDOMINANT',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
              ylabel='YBT PM')
-ybt_box_plot(data_YBT, x=x,
+cat_box_plot(data_YBT, x=x,
              y1='YBT_PL_DOMINANT',
              y2='YBT_PL_NONDOMINANT',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
              ylabel='YBT PL')
-ybt_box_plot(data_YBT, x=x,
+cat_box_plot(data_YBT, x=x,
              y1='YBT_COMPOSITE_DOMINANT',
              y2='YBT_COMPOSITE_NONDOMINANT',
              title1=title1,
@@ -379,40 +380,37 @@ ybt_box_plot(data_YBT, x=x,
 # %%
 #FMS
 def fms_box_plot(data, x, y, title, xlabel, ylabel, precision=0):
-    data_FMS = data
-    bins = pd.cut(data_YBT[x], bins=4, include_lowest=True)
-    bin_labels = [f"{b.left:.{precision}f}-{b.right:.{precision}f}" for b in bins.cat.categories]
-    bin_labels[0] = f"{min(data_YBT[x]):.{precision}f}" + "-" + str(bin_labels[0].split('-')[1])
-    bin_labels = [f"{b}".replace('-', '\u2013') for b in bin_labels]
-    for b in bins.cat.categories:
-        print(b)
-    print(bin_labels)
+    median_value = data[x].median()
+    bins=[data[x].min(), median_value, data[x].max()]
 
-    data_FMS['Training_Volume_Binned'] = pd.cut(data_FMS[x], bins=4,
-                                            labels=bin_labels, include_lowest=True)
+    data['Training_Volume_Binned'] = pd.cut(data[x], bins=bins,
+                                            labels=['<= Median', '> Median'],
+                                            include_lowest=True)
 
     fig, ax = plt.subplots(figsize=(8, 6))
 
-    sns.boxplot(x='Training_Volume_Binned', y=y, data=data_FMS)
-    sns.stripplot(x='Training_Volume_Binned', y=y, data=data_FMS, color=".3")
+    sns.boxplot(x='Training_Volume_Binned', y=y, data=data)
+    sns.stripplot(x='Training_Volume_Binned', y=y, data=data, color=".3")
     ax.set_title(title)
     ax.set_ylabel(ylabel)
     ax.grid(axis='y')
-    ax.set_xlabel(xlabel)
+    xlabel += f' (median:{median_value})'
+    fig.supxlabel(xlabel)
 
     plt.tight_layout()
     plt.show()
 
 title = 'FMS Total Score'
-# x = 'Training_Volume_Weekly_MainSport'
-# xlabel = 'Training Volume Main Sport [hrs/week]'
+x = 'Training_Volume_Weekly_MainSport'
+xlabel = 'Training Volume Main Sport [hrs/week]'
+ylabel = 'FMS Total Score'
+fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
 
 x = 'Training_Volume_Weekly_ALLSports'
 xlabel = 'Training Volume All Sports [hrs/week]'
-
-ylabel = 'FMS Total Score'
-
 fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
+
+
 
 
 # %%
@@ -661,28 +659,28 @@ x = 'Chronologic_Age'
 xlabel = 'Chronologic Age [years]'
 
 
-ybt_box_plot(data_YBT, x=x,
+cat_box_plot(data_YBT, x=x,
              y1='YBT_ANT_DOMINANT',
              y2='YBT_ANT_NONDOMINANT',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
              ylabel='YBT ANT')
-ybt_box_plot(data_YBT, x=x,
+cat_box_plot(data_YBT, x=x,
              y1='YBT_PM_DOMINANT',
              y2='YBT_PM_NONDOMINANT',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
              ylabel='YBT PM')
-ybt_box_plot(data_YBT, x=x,
+cat_box_plot(data_YBT, x=x,
              y1='YBT_PL_DOMINANT',
              y2='YBT_PL_NONDOMINANT',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
              ylabel='YBT PL')
-ybt_box_plot(data_YBT, x=x,
+cat_box_plot(data_YBT, x=x,
              y1='YBT_COMPOSITE_DOMINANT',
              y2='YBT_COMPOSITE_NONDOMINANT',
              title1=title1,
@@ -690,28 +688,28 @@ ybt_box_plot(data_YBT, x=x,
              xlabel=xlabel,
              ylabel='YBT COMP')
 # %%
-ybt_box_plot(data_HHD, x=x,
+cat_box_plot(data_HHD, x=x,
              y1='PS_DOMINANT_PEAK_FORCE',
              y2='PS_NONDOMINANT_PEAK_FORCE',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
              ylabel='HHD PS')
-ybt_box_plot(data_HHD, x=x,
+cat_box_plot(data_HHD, x=x,
              y1='CZ_DOMINANT_PEAK_FORCE',
              y2='CZ_NONDOMINANT_PEAK_FORCE',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
              ylabel='HHD CZ')
-ybt_box_plot(data_HHD, x=x,
+cat_box_plot(data_HHD, x=x,
              y1='DW_DOMINANT_PEAK_FORCE',
              y2='DW_NONDOMINANT_PEAK_FORCE',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
              ylabel='HHD DW')
-ybt_box_plot(data_HHD, x=x,
+cat_box_plot(data_HHD, x=x,
              y1='BR_DOMINANT_PEAK_FORCE',
              y2='BR_NONDOMINANT_PEAK_FORCE',
              title1=title1,
