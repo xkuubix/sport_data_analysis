@@ -4,4 +4,5 @@ __pycache__/
 .vscode/
 
 # Dependency directories
-figury*/
+/figury*/
+/p2/figury*/*
