@@ -342,11 +342,11 @@ def cat_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel, showfliers=Fal
 title1 = 'Dominant Extremity'
 title2 = 'Non Dominant Extremity'
 
-# x = 'Training_Volume_Weekly_ALLSports'
-# xlabel = 'Training Volume All Sports [hrs/week]'
+x = 'Training_Volume_Weekly_ALLSports'
+xlabel = 'Training Volume All Sports [hrs/week]'
 
-x = 'Training_Volume_Weekly_MainSport'
-xlabel = 'Training Volume Main Sport [hrs/week]'
+# x = 'Training_Volume_Weekly_MainSport'
+# xlabel = 'Training Volume Main Sport [hrs/week]'
 
 cat_box_plot(data_YBT, x=x,
              y1='YBT_ANT_DOMINANT',
@@ -376,6 +376,36 @@ cat_box_plot(data_YBT, x=x,
              title2=title2, 
              xlabel=xlabel,
              ylabel='YBT COMP')
+
+# %%
+cat_box_plot(data_HHD, x=x,
+                y1='PS_DOMINANT_PEAK_FORCE',
+                y2='PS_NONDOMINANT_PEAK_FORCE',
+                title1=title1,
+                title2=title2,
+                xlabel=xlabel,
+                ylabel='HHD PS')
+cat_box_plot(data_HHD, x=x,
+                y1='CZ_DOMINANT_PEAK_FORCE',
+                y2='CZ_NONDOMINANT_PEAK_FORCE',
+                title1=title1,
+                title2=title2,
+                xlabel=xlabel,
+                ylabel='HHD CZ')
+cat_box_plot(data_HHD, x=x,
+                y1='DW_DOMINANT_PEAK_FORCE',
+                y2='DW_NONDOMINANT_PEAK_FORCE',
+                title1=title1,
+                title2=title2,
+                xlabel=xlabel,
+                ylabel='HHD DW')
+cat_box_plot(data_HHD, x=x,
+                y1='BR_DOMINANT_PEAK_FORCE',
+                y2='BR_NONDOMINANT_PEAK_FORCE',
+                title1=title1,
+                title2=title2,
+                xlabel=xlabel,
+                ylabel='HHD BR')
 
 # %%
 #FMS
@@ -789,3 +819,73 @@ create_boxplot_4row(
     order=['No', 'Yes'], 
     x_label='Athletes who participated in their primary sport for more hours per week than their age'
 )
+
+# %%
+
+title1 = 'Dominant Extremity'
+title2 = 'Non Dominant Extremity'
+
+x = 'Experience_main_sport'
+xlabel = 'Experience in main sport [years]'
+cat_box_plot(data_YBT, x=x,
+             y1='YBT_ANT_DOMINANT',
+             y2='YBT_ANT_NONDOMINANT',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='YBT ANT')
+cat_box_plot(data_YBT, x=x,
+             y1='YBT_PM_DOMINANT',
+             y2='YBT_PM_NONDOMINANT',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='YBT PM')
+cat_box_plot(data_YBT, x=x,
+             y1='YBT_PL_DOMINANT',
+             y2='YBT_PL_NONDOMINANT',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='YBT PL')
+cat_box_plot(data_YBT, x=x,
+             y1='YBT_COMPOSITE_DOMINANT',
+             y2='YBT_COMPOSITE_NONDOMINANT',
+             title1=title1,
+             title2=title2, 
+             xlabel=xlabel,
+             ylabel='YBT COMP')
+
+# %%
+
+cat_box_plot(data_HHD, x=x,
+                y1='PS_DOMINANT_PEAK_FORCE',
+                y2='PS_NONDOMINANT_PEAK_FORCE',
+                title1=title1,
+                title2=title2,
+                xlabel=xlabel,
+                ylabel='HHD PS')
+cat_box_plot(data_HHD, x=x,
+                y1='CZ_DOMINANT_PEAK_FORCE',
+                y2='CZ_NONDOMINANT_PEAK_FORCE',
+                title1=title1,
+                title2=title2,
+                xlabel=xlabel,
+                ylabel='HHD CZ')
+cat_box_plot(data_HHD, x=x,
+                y1='DW_DOMINANT_PEAK_FORCE',
+                y2='DW_NONDOMINANT_PEAK_FORCE',
+                title1=title1,
+                title2=title2,
+                xlabel=xlabel,
+                ylabel='HHD DW')
+cat_box_plot(data_HHD, x=x,
+                y1='BR_DOMINANT_PEAK_FORCE',
+                y2='BR_NONDOMINANT_PEAK_FORCE',
+                title1=title1,
+                title2=title2,
+                xlabel=xlabel,
+                ylabel='HHD BR')
+
+# %%
+fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
