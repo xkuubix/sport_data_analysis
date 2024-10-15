@@ -386,3 +386,14 @@ for key in FMS_KEYS:
     perform_ttest_or_mannwhitney(data_FMS, criteria[num], key)
 
 # %%
+
+for key in YBT_KEYS:
+    two_means_correlation(data_YBT, key, 'Experience_main_sport')
+
+for key in HHD_KEYS:
+    two_means_correlation(data_HHD, key, 'Experience_main_sport')
+
+for key in FMS_KEYS:
+    two_means_correlation(data_FMS, key, 'Experience_main_sport')
+
+# %%
