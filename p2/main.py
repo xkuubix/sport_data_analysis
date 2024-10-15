@@ -721,6 +721,71 @@ cat_box_plot(data_HHD, x=x,
 fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
 
 # %%
-# # kryteria specjalizacji sportowej
+# # 4 sport specialization criteria:
+# 'Given_up_sport_for_main', 'Main_sport_more_important',
+# 'Months_in_a_year>8', 'Hours_per_week>Age',
 
-#get statistics
+create_boxplot_4row(
+    data=data_YBT, 
+    id_var='Given_up_sport_for_main', 
+    value_vars_list=[
+        ['YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT'],
+        ['YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT'],
+        ['YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT'],
+        ['YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT']
+    ], 
+    row_labels=['YBT ANT', 'YBT PM', 'YBT PL', 'YBT COMP'], 
+    hue_label='Dominant Extremity', 
+    legend_labels=['Dominant', 'Nondominant'], 
+    palette=["m", "g"], 
+    order=['No', 'Yes'], 
+    x_label='Given up sport for main sport'
+)
+create_boxplot_4row(
+    data=data_YBT, 
+    id_var='Main_sport_more_important', 
+    value_vars_list=[
+        ['YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT'],
+        ['YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT'],
+        ['YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT'],
+        ['YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT']
+    ], 
+    row_labels=['YBT ANT', 'YBT PM', 'YBT PL', 'YBT COMP'], 
+    hue_label='Dominant Extremity', 
+    legend_labels=['Dominant', 'Nondominant'], 
+    palette=["m", "g"], 
+    order=['No', 'Yes'], 
+    x_label='Main sport more important'
+)
+create_boxplot_4row(
+    data=data_YBT, 
+    id_var='Months_in_a_year>8', 
+    value_vars_list=[
+        ['YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT'],
+        ['YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT'],
+        ['YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT'],
+        ['YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT']
+    ], 
+    row_labels=['YBT ANT', 'YBT PM', 'YBT PL', 'YBT COMP'], 
+    hue_label='Dominant Extremity', 
+    legend_labels=['Dominant', 'Nondominant'], 
+    palette=["m", "g"], 
+    order=['No', 'Yes'], 
+    x_label='Trains for more than 8 months in a year'
+)
+create_boxplot_4row(
+    data=data_YBT, 
+    id_var='Hours_per_week>Age', 
+    value_vars_list=[
+        ['YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT'],
+        ['YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT'],
+        ['YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT'],
+        ['YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT']
+    ], 
+    row_labels=['YBT ANT', 'YBT PM', 'YBT PL', 'YBT COMP'], 
+    hue_label='Dominant Extremity', 
+    legend_labels=['Dominant', 'Nondominant'], 
+    palette=["m", "g"], 
+    order=['No', 'Yes'], 
+    x_label='Athletes who participated in their primary sport for more hours per week than their age'
+)
