@@ -369,3 +369,20 @@ for key in HHD_KEYS:
 
 for key in FMS_KEYS:
     two_means_correlation(data_FMS, key, 'Chronologic_Age')
+
+
+# %% SPORTS SPECIALIZATION CRITERIA
+# # 4 sport specialization criteria:
+# 'Given_up_sport_for_main', 'Main_sport_more_important',
+# 'Months_in_a_year>8', 'Hours_per_week>Age',
+criteria = ['Given_up_sport_for_main', 'Main_sport_more_important', 'Months_in_a_year>8', 'Hours_per_week>Age']
+num = 3
+print(criteria[num])
+for key in YBT_KEYS:
+    perform_ttest_or_mannwhitney(data_YBT, criteria[num], key)
+for key in HHD_KEYS:
+    perform_ttest_or_mannwhitney(data_HHD, criteria[num], key)
+for key in FMS_KEYS:
+    perform_ttest_or_mannwhitney(data_FMS, criteria[num], key)
+
+# %%
