@@ -889,3 +889,19 @@ cat_box_plot(data_HHD, x=x,
 
 # %%
 fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
+
+# %%
+# 'Sex', 'Chronologic_Age', 'Sport', 'Sports', 'Dominant_extremity',
+#        'Geographic_Factor', 'Pain_now', 'Injury_History',
+#        'Injury_History_MoreThanOne (0=no,1=yes)',
+#        'Training_Volume_Weekly_MainSport', 'Training_Volume_Weekly_ALLSports',
+#        'Given_up_sport_for_main', 'Main_sport_more_important',
+#        'Months_in_a_year>8', 'Hours_per_week>Age', 'Experience_main_sport',
+#        'Sports_Specialization', 'Sports_Specialization_ordinal',
+
+print(data_pure['Pain_now'].value_counts())
+print(f"{round(data_pure['Pain_now'].value_counts(normalize=True),2)}")
+# %%
+
+print(f"{data_pure['Chronologic_Age'].mean():.2f}", end=' (')
+print(f"{data_pure['Chronologic_Age'].std():.2f}", end=')\n')
