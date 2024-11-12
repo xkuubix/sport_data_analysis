@@ -106,7 +106,7 @@ def correct_dtype(data):
     ]
     for col in columns_to_convert:
         if col in data.columns:
-            data[col] = data[col].astype(float)
+            data.iloc[:, data.columns.get_loc(col)] = pd.to_numeric(data[col], errors='coerce')
 
     peak_force_columns = [
         'PS_L_PEAK_FORCE', 'PS_R_PEAK_FORCE', 'CZ_L_PEAK_FORCE', 'CZ_R_PEAK_FORCE',
@@ -114,7 +114,7 @@ def correct_dtype(data):
     ]
     for col in peak_force_columns:
         if col in data.columns:
-            data[col] = data[col].astype(float)
+            data.iloc[:, data.columns.get_loc(col)] = pd.to_numeric(data[col], errors='coerce')
 
     ybt_columns = [
         'YBT_ANT_L_Normalized', 'YBT_ANT_R_Normalized', 'YBT_PM_L_Normalized',
@@ -123,7 +123,7 @@ def correct_dtype(data):
     for col in ybt_columns:
         if col in data.columns:
             if data[col].dtype == 'object':
-                data[col] = data[col].apply(pd.to_numeric, errors='coerce')
+                data.iloc[:, data.columns.get_loc(col)] = pd.to_numeric(data[col], errors='coerce')
 
     if "Injury_History_MoreThanOne (0=no,1=yes)":
         data['Injury_History_MoreThanOne (0=no,1=yes)'] = data['Injury_History_MoreThanOne (0=no,1=yes)'].map({'1': 'Yes', '': 'No'})
@@ -135,7 +135,7 @@ def recover_missing(data, missing_values=None):
     number_of_missing = data.notna().all(axis=1).sum()
     if missing_values == 'BMI':
         if 'BMI' not in data.columns or 'Height (cm)' not in data.columns or 'Weight (kg)' not in data.columns:
-            logger.error('Missing columns: BMI, Height (cm), Weight (kg)')
+            logger.warning('Missing columns: BMI, Height (cm), Weight (kg)')
             return data
         logger.info(f'Recovering missing {missing_values} values, current number of missing values: %d', number_of_missing)
         # if we have empty BMI, we can calculate it with formula: weight / (height^2)
@@ -146,7 +146,7 @@ def recover_missing(data, missing_values=None):
         data.loc[data['Weight (kg)'].isna(), 'Weight (kg)'] = data.loc[data['Weight (kg)'].isna(), 'BMI'] * ((data.loc[data['Weight (kg)'].isna(), 'Height (cm)'] / 100) ** 2)
     if missing_values == 'PHV':
         if 'Age_PHV' not in data.columns:
-            logger.error('Missing column: Age_PHV')
+            logger.warning('Missing column: Age_PHV')
             return data
         logger.info(f'Recovering missing {missing_values} values, current number of missing values: %d', number_of_missing)
         # age phv calculation
