@@ -92,6 +92,11 @@ def erase_rows(data):
         data = data[data.Injury_History_Localization_Upper_Lower_Torso != "Neck"]
     if 'Maturity_Offset' in data.columns:
         data = data[data['Maturity_Offset'] != "A"] # probably a mistake (NA)
+    logger.info('Erasing manually selected outlier (impossible) measures')
+    # remove row with id8599, id9431
+    data = data[data['ID'] != 8599]
+    data = data[data['ID'] != 9431]
+
 
     return data
 
