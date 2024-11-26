@@ -275,16 +275,20 @@ create_boxplot_4row(
 )
 
 # %%
-
-sns.boxplot(x='Sports_Specialization', y='FMS_TOTAL', data=data_FMS,
-            order=['low', 'moderate', 'high'])
-sns.stripplot(x='Sports_Specialization', y='FMS_TOTAL', data=data_FMS, color=".3")
+fig, ax = plt.subplots(figsize=(5, 4))
+sns.boxplot(x='Sports_Specialization', y='FMS_TOTAL', data=data_FMS, ax=ax,
+            order=['low', 'moderate', 'high'], showfliers=False,
+            fill=False, linewidth=1, color='black', width=0.5,
+            medianprops=dict(color='gray', linewidth=2))
+sns.stripplot(x='Sports_Specialization', y='FMS_TOTAL', data=data_FMS, ax=ax,
+              color="black", size=3)
 plt.xlabel('Sports Specialization')
-plt.ylabel('FMS Total Score')
+plt.ylabel('FMS Total Score [-]')
 plt.grid(axis='y')
+plt.tight_layout()
+sns.despine(bottom = True, left = True)
+ax.tick_params(left=False, bottom=False)
 plt.show()
-
-
 
 # %%
 # Hypothesis 2
@@ -302,18 +306,27 @@ def cat_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel, showfliers=Fal
     print(bins)
     data['Training_Volume_Binned'] = pd.cut(data[x], bins=bins,
                                             include_lowest=True,
-                                            labels=['<= Median', '> Median'])
+                                            # labels=['<= Median', '> Median'])
+                                            # labels=['$\leq$median', '$>$median']
+                                            labels=[f'$\leq$'+str(median_value),
+                                                    '$>$'+str(median_value)],)
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+    fig, axes = plt.subplots(1, 2, figsize=(8, 6))
     print(data['Training_Volume_Binned'].value_counts())
     # plot boxplot (no outliers cuz stirplot shows doubled points) and stripplot for each y variable
-    sns.boxplot(x='Training_Volume_Binned', y=y1, data=data, ax=axes[0], showfliers=showfliers)
-    sns.stripplot(x='Training_Volume_Binned', y=y1, data=data, ax=axes[0], color=".3")
+    sns.boxplot(x='Training_Volume_Binned', y=y1, data=data, ax=axes[0], showfliers=showfliers,
+                fill=False, linewidth=1, color='black', width=0.5,
+                medianprops=dict(color='gray', linewidth=2))
+    sns.stripplot(x='Training_Volume_Binned', y=y1, data=data, ax=axes[0],
+                  color="black", size=3)
     axes[0].set_title(title1)
     axes[0].set_ylabel(ylabel)
 
-    sns.boxplot(x='Training_Volume_Binned', y=y2, data=data, ax=axes[1], showfliers=showfliers)
-    sns.stripplot(x='Training_Volume_Binned', y=y2, data=data, ax=axes[1], color=".3")
+    sns.boxplot(x='Training_Volume_Binned', y=y2, data=data, ax=axes[1], showfliers=showfliers,
+                fill=False, linewidth=1, color='black', width=0.5,
+                medianprops=dict(color='gray', linewidth=2))
+    sns.stripplot(x='Training_Volume_Binned', y=y2, data=data, ax=axes[1],
+                  color="black", size=3)
     axes[1].set_title(title2)
     axes[1].set_ylabel(ylabel)
     ylim_ax0 = axes[0].get_ylim()
@@ -329,7 +342,7 @@ def cat_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel, showfliers=Fal
     axes[1].set_xlabel('')
     
     # Set a shared x-axis label for the whole row
-    xlabel += f' (median:{median_value})'
+    # xlabel += f' (median:{median_value})'
     fig.supxlabel(xlabel)
 
     for ax in axes:
@@ -337,6 +350,9 @@ def cat_box_plot(data, x, y1, y2, title1, title2, xlabel, ylabel, showfliers=Fal
         ax.grid(axis='y')
 
     plt.tight_layout()
+    sns.despine(bottom = True, left = True)
+    for ax in axes:
+        ax.tick_params(left=False, bottom=False)
     plt.show()
 
 title1 = 'Dominant Extremity'
@@ -345,8 +361,8 @@ title2 = 'Non Dominant Extremity'
 x = 'Training_Volume_Weekly_ALLSports'
 xlabel = 'Training Volume All Sports [hrs/week]'
 
-# x = 'Training_Volume_Weekly_MainSport'
-# xlabel = 'Training Volume Main Sport [hrs/week]'
+x = 'Training_Volume_Weekly_MainSport'
+xlabel = 'Training Volume Main Sport [hrs/week]'
 
 cat_box_plot(data_YBT, x=x,
              y1='YBT_ANT_DOMINANT',
@@ -414,33 +430,39 @@ def fms_box_plot(data, x, y, title, xlabel, ylabel, precision=0):
     bins=[data[x].min(), median_value, data[x].max()]
 
     data['Training_Volume_Binned'] = pd.cut(data[x], bins=bins,
-                                            labels=['<= Median', '> Median'],
+                                            labels=[f'$\leq$'+str(median_value),
+                                                    '$>$'+str(median_value)],
                                             include_lowest=True)
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-
-    sns.boxplot(x='Training_Volume_Binned', y=y, data=data)
-    sns.stripplot(x='Training_Volume_Binned', y=y, data=data, color=".3")
-    ax.set_title(title)
+    fig, ax = plt.subplots(figsize=(5, 4))
+    sns.boxplot(x='Training_Volume_Binned', y=y, data=data, showfliers=False,
+                fill=False, linewidth=1, color='black', width=0.25,
+                medianprops=dict(color='gray', linewidth=2))
+    sns.stripplot(x='Training_Volume_Binned', y=y, data=data,
+                  color="black", size=3)
     ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
     ax.grid(axis='y')
-    xlabel += f' (median:{median_value})'
-    fig.supxlabel(xlabel)
+    # xlabel += f' (median:{median_value})'
+    # title = xlabel + f' (median:{median_value})'
+    # ax.set_title(title)
+    # fig.supxlabel(xlabel)
 
     plt.tight_layout()
+
+    sns.despine(bottom = True, left = True)
+    ax.tick_params(left=False, bottom=False)
     plt.show()
 
-title = 'FMS Total Score'
+title = 'Comparison of FMS Total Scores by Weekly Training Volume'
 x = 'Training_Volume_Weekly_MainSport'
 xlabel = 'Training Volume Main Sport [hrs/week]'
-ylabel = 'FMS Total Score'
+ylabel = 'FMS Total Score [-]'
 fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
 
 x = 'Training_Volume_Weekly_ALLSports'
-xlabel = 'Training Volume All Sports [hrs/week]'
+xlabel = 'Training Volume All Sports'
 fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
-
-
 
 
 # %%
@@ -452,7 +474,8 @@ def linear_plot(data, x, y1, y2, xlabel, ylabel1, ylabel2, title1, title2):
     Y1 = data[y1].values
     Y2 = data[y2].values
 
-    model1 = HuberRegressor()
+    # model1 = HuberRegressor()
+    model1 = LinearRegression()
     model1.fit(X, Y1)
     predictions1 = model1.predict(X)
     coef1 = model1.coef_[0]
@@ -464,25 +487,29 @@ def linear_plot(data, x, y1, y2, xlabel, ylabel1, ylabel2, title1, title2):
     coef2 = model2.coef_[0]
     intercept2 = model2.intercept_
 
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 
-    sns.scatterplot(x=X.flatten(), y=Y1, ax=axes[0], color='blue', label='Data points')
-    sns.lineplot(x=X.flatten(), y=predictions1, ax=axes[0], color='red', label=f'Linear fit: y = {coef1:.2f}x + {intercept1:.2f}')
-    axes[0].set_ylabel(ylabel1)
-    axes[0].set_title(title1)
+    sns.lineplot(x=X.flatten(), y=predictions1, ax=axes[0], color='black', linewidth=4,
+                 label=f'Linear fit: y = {coef1:.2f}x + {intercept1:.2f}')
     axes[0].legend()
+    sns.scatterplot(x=X.flatten(), y=Y1, ax=axes[0], color='gray')
+    axes[0].set_ylabel(ylabel1)
+    axes[0].set_xlabel(xlabel)
+    axes[0].set_title(title1)
     axes[0].grid(True)
 
-    sns.scatterplot(x=X.flatten(), y=Y2, ax=axes[1], color='blue', label='Data points')
-    sns.lineplot(x=X.flatten(), y=predictions2, ax=axes[1], color='red', label=f'Linear fit: y = {coef2:.2f}x + {intercept2:.2f}')
-    axes[1].set_ylabel(ylabel2)
-    axes[1].set_title(title2)
+    sns.lineplot(x=X.flatten(), y=predictions2, ax=axes[1], color='black', linewidth=4,
+                 label=f'Linear fit: y = {coef2:.2f}x + {intercept2:.2f}')
     axes[1].legend()
+    sns.scatterplot(x=X.flatten(), y=Y2, ax=axes[1], color='gray')
+    axes[1].set_ylabel(ylabel2)
+    axes[1].set_xlabel(xlabel)
+    axes[1].set_title(title2)
     axes[1].grid(True)
 
-    axes[0].set_xlabel('')
-    axes[1].set_xlabel('')
-    fig.supxlabel(xlabel)
+    axes[0].set_title('Dominant Extremity')
+    axes[1].set_title('Non Dominant Extremity')
+    # fig.supxlabel(xlabel)
     ylim_ax0 = axes[0].get_ylim()
     ylim_ax1 = axes[1].get_ylim()
     upper_lim = math.ceil(max(ylim_ax0[1], ylim_ax1[1]))
@@ -490,8 +517,10 @@ def linear_plot(data, x, y1, y2, xlabel, ylabel1, ylabel2, title1, title2):
     for ax in axes:
         ax.set_ylim([lower_lim, upper_lim])
         ax.grid
-    
+
     plt.tight_layout()
+    sns.despine(bottom = True, left = True)
+    ax.tick_params(left=False, bottom=False)
     plt.show()
 
     print(f'Coefficient for {y1}: {coef1:.2f}')
@@ -547,15 +576,18 @@ def linear_plot_fms(data, x, y, xlabel, ylabel, title):
     coef = model.coef_[0]
     intercept = model.intercept_
 
-    plt.figure(figsize=(10, 6))
-    sns.scatterplot(x=X.flatten(), y=Y, color='blue', label='Data points')
-    sns.lineplot(x=X.flatten(), y=predictions, color='red', label=f'Linear fit: y = {coef:.2f}x + {intercept:.2f}')
+    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+    sns.lineplot(x=X.flatten(), y=predictions, color='black', linewidth=4,
+                 label=f'Linear fit: y = {coef:.2f}x + {intercept:.2f}', ax=ax)
+    sns.scatterplot(x=X.flatten(), y=Y, color='gray')
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
+    sns.despine(bottom = True, left = True)
+    ax.tick_params(left=False, bottom=False)
     plt.show()
 
     print(f'Coefficient: {coef:.2f}')
@@ -602,7 +634,7 @@ y_vars = [
     'YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT',
     'YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT'
 ]
-xlabel = 'Athletes who participated in their primary sport for more hours per week than their age (Yes/No)'
+xlabel = 'Athletes who participated in their primary sport for more hrs/week than their age (Yes/No)'
 ylabels = ['YBT ANT', 'YBT PM', 'YBT PL', 'YBT COMP']
 plot_dominant_vs_nondominant(data_YBT, x='Hours_per_week>Age',
                              y_vars=y_vars, ylabels=ylabels,
@@ -620,14 +652,23 @@ plot_dominant_vs_nondominant(data_HHD, x='Hours_per_week>Age',
                              xlabel=xlabel,
                              hue_label='Dominant Extremity')
 # %%
-fig, ax = plt.subplots(1, 1, figsize=(10, 8))
-sns.boxplot(x='Hours_per_week>Age', y='FMS_TOTAL', data=data_FMS, ax=ax)
-sns.stripplot(x='Hours_per_week>Age', y='FMS_TOTAL', data=data_FMS, color=".3", ax=ax)
+
+fig, ax = plt.subplots(figsize=(5, 4))
+sns.boxplot(x='Hours_per_week>Age', y='FMS_TOTAL', data=data_FMS, ax=ax,
+            showfliers=False,  order=['No', 'Yes'],
+            fill=False, linewidth=1, color='black', width=0.5,
+            medianprops=dict(color='gray', linewidth=2))
+sns.stripplot(x='Hours_per_week>Age', y='FMS_TOTAL', data=data_FMS, ax=ax,
+              color="black", size=3)
+xlabel = 'Athletes who participated in their primary sport\nfor more hrs/week than their age (Yes/No)'
 plt.xlabel(xlabel)
-plt.ylabel('FMS Total Score')
+plt.ylabel('FMS Total Score [-]')
+plt.grid(axis='y')
 plt.tight_layout()
-ax.grid(axis='y')
+sns.despine(bottom = True, left = True)
+ax.tick_params(left=False, bottom=False)
 plt.show()
+
 # %%
 # Hypothesis 4
 
@@ -662,25 +703,40 @@ plot_dominant_vs_nondominant(data_HHD, x='Injury_History',
                              y_vars=y_vars, ylabels=ylabels,
                              xlabel='Injury History (Yes/No)',
                              hue_label='Dominant Extremity')
-
+plot_dominant_vs_nondominant(data_HHD, x='Injury_History_MoreThanOne (0=no,1=yes)',
+                             y_vars=y_vars, ylabels=ylabels,
+                             xlabel='Injury History More Than One (0=no,1=yes)',
+                             hue_label='Dominant Extremity')
 # %%
-fig, ax = plt.subplots(1, 1, figsize=(10, 8))
-sns.boxplot(x='Injury_History', y='FMS_TOTAL', data=data_FMS, ax=ax, order=['No', 'Yes'])
-sns.stripplot(x='Injury_History', y='FMS_TOTAL', data=data_FMS, color=".3", ax=ax)
+fig, ax = plt.subplots(figsize=(5, 4))
+sns.boxplot(x='Injury_History', y='FMS_TOTAL', data=data_FMS, ax=ax,
+            showfliers=False, order=['No', 'Yes'],
+            fill=False, linewidth=1, color='black', width=0.5,
+            medianprops=dict(color='gray', linewidth=2))
+sns.stripplot(x='Injury_History', y='FMS_TOTAL', data=data_FMS, ax=ax,
+              color="black", size=3)
 plt.xlabel('Injury History (Yes/No)')
-plt.ylabel('FMS Total Score')
+plt.ylabel('FMS Total Score [-]')
+plt.grid(axis='y')
 plt.tight_layout()
-ax.grid(axis='y')
+sns.despine(bottom = True, left = True)
+ax.tick_params(left=False, bottom=False)
 plt.show()
 
 # %%
-fig, ax = plt.subplots(1, 1, figsize=(10, 8))
-sns.boxplot(x='Injury_History_MoreThanOne (0=no,1=yes)', y='FMS_TOTAL', data=data_FMS, ax=ax, order=['No', 'Yes'])
-sns.stripplot(x='Injury_History_MoreThanOne (0=no,1=yes)', y='FMS_TOTAL', data=data_FMS, color=".3", ax=ax)
+fig, ax = plt.subplots(figsize=(5, 4))
+sns.boxplot(x='Injury_History_MoreThanOne (0=no,1=yes)', y='FMS_TOTAL', data=data_FMS, ax=ax,
+            showfliers=False, order=['No', 'Yes'],
+            fill=False, linewidth=1, color='black', width=0.5,
+            medianprops=dict(color='gray', linewidth=2))
+sns.stripplot(x='Injury_History_MoreThanOne (0=no,1=yes)', y='FMS_TOTAL', data=data_FMS, ax=ax,
+              color="black", size=3)
 plt.xlabel('Injury History More Than One (Yes/No)')
-plt.ylabel('FMS Total Score')
+plt.ylabel('FMS Total Score [-]')
+plt.grid(axis='y')
 plt.tight_layout()
-ax.grid(axis='y')
+sns.despine(bottom = True, left = True)
+ax.tick_params(left=False, bottom=False)
 plt.show()
 #%%
 #Hypothesis 6 (ommit 5 - no data)
