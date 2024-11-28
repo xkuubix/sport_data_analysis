@@ -1,14 +1,13 @@
 import sys
 import os
 sys.path.append(os.path.abspath('../')) 
-import pandas as pd
-import math
 import random
 import warnings
 import logging
 import utils
-from sklearn.linear_model import LinearRegression, HuberRegressor
 import numpy as np
+from scipy import stats
+
 # %%
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -131,7 +130,6 @@ data_YBT['YBT_PL_NONDOMINANT'] = data_YBT.apply(assign_dominant_extremity, right
 data_YBT['YBT_COMPOSITE_NONDOMINANT'] = data_YBT.apply(assign_dominant_extremity, right_col='YBT_COMPOSITE_L', left_col='YBT_COMPOSITE_R', axis=1)
 
 #%% tests
-from scipy import stats
 
 # check data normality and homogeneity of variance
 
@@ -238,9 +236,7 @@ def multiple_means_and_post_hocs(data, keys, group_col='Sports_Specialization'):
 multiple_means_and_post_hocs(data=data_YBT, keys=YBT_KEYS, group_col='Sports_Specialization')
 multiple_means_and_post_hocs(data=data_HHD, keys=HHD_KEYS, group_col='Sports_Specialization')
 multiple_means_and_post_hocs(data=data_FMS, keys=FMS_KEYS, group_col='Sports_Specialization')
-
 # %%
-
 print(data_YBT['Sports_Specialization'].value_counts())
 print(data_HHD['Sports_Specialization'].value_counts())
 print(data_FMS['Sports_Specialization'].value_counts())
@@ -396,4 +392,33 @@ for key in HHD_KEYS:
 for key in FMS_KEYS:
     two_means_correlation(data_FMS, key, 'Experience_main_sport')
 
-# %%
+# %% PAIRED TESTS FOR DOMINANT AND NON-DOMINANT EXTREMITIES DIFFERENCE BETWEEN MEASURES
+
+def paired_test(data, key_pair_list):
+    for key_pair in key_pair_list:
+        normality_pvalues = [stats.shapiro(data[key])[1] for key in key_pair]
+        normality = all(p > 0.05 for p in normality_pvalues)
+        if normality:
+            t, p = stats.ttest_rel(data[key_pair[0]], data[key_pair[1]])
+            test_name = "Paired t-test"
+        else:
+            t, p = stats.wilcoxon(data[key_pair[0]], data[key_pair[1]])
+            test_name = "Wilcoxon signed-rank test"
+        if p < 0.05:
+            print('\n***')
+        print(f"{test_name} result for {key_pair[0]} and {key_pair[1]}: t = {t:.3f}, p-value = {p:.6f}")
+        if p < 0.05:
+            print('***\n')
+
+
+YBT_PAIRS = [('YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT'),
+            ('YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT'),
+            ('YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT'),
+            ('YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT')]
+HHD_PAIRS = [('PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE'),
+            ('CZ_DOMINANT_PEAK_FORCE', 'CZ_NONDOMINANT_PEAK_FORCE'),
+            ('DW_DOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE'),
+            ('BR_DOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE')]
+
+paired_test(data_YBT, YBT_PAIRS)
+paired_test(data_HHD, HHD_PAIRS)
