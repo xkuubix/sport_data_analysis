@@ -961,3 +961,60 @@ print(f"{round(data_pure['Pain_now'].value_counts(normalize=True),2)}")
 
 print(f"{data_pure['Chronologic_Age'].mean():.2f}", end=' (')
 print(f"{data_pure['Chronologic_Age'].std():.2f}", end=')\n')
+
+
+# %%
+# plot dominant vs non dominant for all measures
+def draw_box_plots(data, pairs, ylabels, figsize=(12, 6), save_path=None):
+    fig, axes = plt.subplots(1, 4, figsize=figsize)
+    for i, (dominant, non_dominant) in enumerate(pairs):
+        melted_data = data[[dominant, non_dominant]].melt(var_name='Group', value_name='Measure')
+        # mapt Dominant and Nondominant to group names depending on the name of group
+        melted_data['Group'] = melted_data['Group'].apply(lambda x: 'Nondominant' if 'NONDOMINANT' in x else 'Dominant')
+        sns.boxplot(x='Group', y='Measure', data=melted_data, showfliers=False, ax=axes[i],
+                    fill=False, linewidth=1, color='black', width=0.5,
+                    medianprops=dict(color='gray', linewidth=2))
+        sns.stripplot(x='Group', y='Measure', data=melted_data, ax=axes[i],
+                      color="black", size=3)
+        axes[i].grid(axis='y')
+        sns.despine(bottom=True, left=True)
+        axes[i].tick_params(left=False, bottom=False)
+        axes[i].set_xlabel('')
+        axes[i].set_ylabel('')
+        axes[i].set_title(ylabels[i])
+
+    # for ax in axes:
+        # ax.grid(True, which='both', axis='y', linestyle='-', linewidth=2)
+        # ax.minorticks_on()
+        # ax.grid(True, which='minor', axis='y', linestyle='-', linewidth=0.5)
+        # ax.tick_params(axis='both', which='both', length=0)
+
+    plt.suptitle(f"Dominant vs Nondominant extremity {ylabels[-1]} measures")
+    plt.tight_layout()
+
+    # Save or show the plot
+    if save_path:
+        plt.savefig(save_path)
+    else:
+        plt.show()
+
+pairs = [
+    ('YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT'),
+    ('YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT'),
+    ('YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT'),
+    ('YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT')]
+
+ylabels = ['ANT', 'PM', 'PL', 'COMP', 'YBT']
+
+draw_box_plots(data_YBT, pairs, ylabels)
+
+pairs = [
+    ('PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE'),
+    ('CZ_DOMINANT_PEAK_FORCE', 'CZ_NONDOMINANT_PEAK_FORCE'),
+    ('DW_DOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE'),
+    ('BR_DOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE')
+]
+ylabels = ['PS', 'CZ', 'DW', 'BR', 'HHD']
+draw_box_plots(data_HHD, pairs, ylabels)
+
+# %%
