@@ -372,7 +372,12 @@ for key in FMS_KEYS:
 # 'Given_up_sport_for_main', 'Main_sport_more_important',
 # 'Months_in_a_year>8', 'Hours_per_week>Age',
 criteria = ['Given_up_sport_for_main', 'Main_sport_more_important', 'Months_in_a_year>8', 'Hours_per_week>Age']
-num = 3
+num = 2
+
+# print(data_YBT[criteria[num]].value_counts())
+# print(data_HHD[criteria[num]].value_counts())
+# print(data_FMS[criteria[num]].value_counts())
+
 print(criteria[num])
 for key in YBT_KEYS:
     perform_ttest_or_mannwhitney(data_YBT, criteria[num], key)
