@@ -196,8 +196,12 @@ def multiple_means_and_post_hocs(data, keys, group_col='Sports_Specialization'):
         # Descriptive statistics
         for group in data[group_col].unique():
             print(f"Group {group}:")
+            print(f"{'MEAN (SD):':14}", end='')
             print(f"{data[key][data[group_col] == group].mean():.2f}", end=' (')
             print(f"{data[key][data[group_col] == group].std():.2f})")
+            print(f"{'MEDIAN (IQR):':14}", end='')
+            print(f"{data[key][data[group_col] == group].median():.2f}", end=' (')
+            print(f"{np.percentile(data[key][data[group_col] == group], 75) - np.percentile(data[key][data[group_col] == group], 25):.2f})")
 
         # Get data for each Sport Specialization group
         group_data = [data[key][data[group_col] == group] 
@@ -281,8 +285,13 @@ def perform_ttest_or_mannwhitney(data, group_col, value_col):
     
     for group in groups:
         print(f"Group {group}:")
+        print(f"{'MEAN (SD):':14}", end='')
         print(f"{data[key][data[group_col] == group].mean():.2f}", end=' (')
         print(f"{data[key][data[group_col] == group].std():.2f})")
+        print(f"{'MEDIAN (IQR):':14}", end='')
+        print(f"{data[key][data[group_col] == group].median():.2f}", end=' (')
+        print(f"{np.percentile(data[key][data[group_col] == group], 75) - np.percentile(data[key][data[group_col] == group], 25):.2f})")
+
     # Test for normality
     stat1, pvalue1 = stats.shapiro(group1)
     stat2, pvalue2 = stats.shapiro(group2)
