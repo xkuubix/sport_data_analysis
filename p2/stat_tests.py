@@ -436,3 +436,38 @@ HHD_PAIRS = [('PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE'),
 
 paired_test(data_YBT, YBT_PAIRS)
 paired_test(data_HHD, HHD_PAIRS)
+
+
+for p in YBT_PAIRS:
+    print(f"{data_YBT[p[0]].mean():.6f} ({data_YBT[p[0]].std():.6f})")
+    print(f"{data_YBT[p[1]].mean():.6f} ({data_YBT[p[1]].std():.6f})")
+for p in HHD_PAIRS:
+    print(f"{data_HHD[p[0]].mean():.6f} ({data_HHD[p[0]].std():.6f})")
+    print(f"{data_HHD[p[1]].mean():.6f} ({data_HHD[p[1]].std():.6f})")
+# %% Assymetry
+for item in range(0, len(YBT_PAIRS)):
+    key = f"{YBT_PAIRS[item][0].split('_')[1]}_ASYMMETRY"
+    data_YBT[key] = abs(data_YBT[YBT_PAIRS[item][0]] - data_YBT[YBT_PAIRS[item][1]])
+    # print(data_YBT.groupby('Sports_Specialization')[key].std())
+    
+for item in range(0, len(HHD_PAIRS)):
+    key = f"{HHD_PAIRS[item][0].split('_')[0]}_ASYMMETRY"
+    data_HHD[key] = abs(data_HHD[HHD_PAIRS[item][0]] - data_HHD[HHD_PAIRS[item][1]]) * 100
+
+YBT_ASSYMETRY_KEYS = ['ANT_ASYMMETRY', 'PM_ASYMMETRY', 'PL_ASYMMETRY', 'COMPOSITE_ASYMMETRY']
+HHD_ASSYMETRY_KEYS = ['PS_ASYMMETRY', 'CZ_ASYMMETRY', 'DW_ASYMMETRY', 'BR_ASYMMETRY']
+
+multiple_means_and_post_hocs(data=data_YBT, keys=YBT_ASSYMETRY_KEYS, group_col='Sports_Specialization')
+multiple_means_and_post_hocs(data=data_HHD, keys=HHD_ASSYMETRY_KEYS, group_col='Sports_Specialization')
+
+# %%
+for key in YBT_ASSYMETRY_KEYS:
+    perform_ttest_or_mannwhitney(data_YBT, 'Injury_History', key)
+for key in HHD_ASSYMETRY_KEYS:
+    perform_ttest_or_mannwhitney(data_HHD, 'Injury_History', key)
+# %%
+for key in YBT_ASSYMETRY_KEYS:
+    perform_ttest_or_mannwhitney(data_YBT, 'Injury_History_MoreThanOne (0=no,1=yes)', key)
+for key in HHD_ASSYMETRY_KEYS:
+    perform_ttest_or_mannwhitney(data_HHD, 'Injury_History_MoreThanOne (0=no,1=yes)', key)
+# %%
