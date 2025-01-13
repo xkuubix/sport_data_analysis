@@ -447,12 +447,22 @@ for p in HHD_PAIRS:
 # %% Assymetry
 for item in range(0, len(YBT_PAIRS)):
     key = f"{YBT_PAIRS[item][0].split('_')[1]}_ASYMMETRY"
-    data_YBT[key] = abs(data_YBT[YBT_PAIRS[item][0]] - data_YBT[YBT_PAIRS[item][1]])
-    # print(data_YBT.groupby('Sports_Specialization')[key].std())
+    # data_YBT[key] = abs(data_YBT[YBT_PAIRS[item][0]] - data_YBT[YBT_PAIRS[item][1]])
+    A = data_YBT[YBT_PAIRS[item][0]]
+    B = data_YBT[YBT_PAIRS[item][1]]
+    # print(A.iloc[0], B.iloc[0])
+    # print(np.maximum(A, B).iloc[0])
+    data_YBT[key] = (A - B) / np.maximum(A, B) * 100
     
 for item in range(0, len(HHD_PAIRS)):
     key = f"{HHD_PAIRS[item][0].split('_')[0]}_ASYMMETRY"
-    data_HHD[key] = abs(data_HHD[HHD_PAIRS[item][0]] - data_HHD[HHD_PAIRS[item][1]]) * 100
+    # data_HHD[key] = abs(data_HHD[HHD_PAIRS[item][0]] - data_HHD[HHD_PAIRS[item][1]]) * 100
+    # data_HHD[key] = abs(data_HHD[HHD_PAIRS[item][0]] - data_HHD[HHD_PAIRS[item][1]]) * 100
+    A = data_HHD[HHD_PAIRS[item][0]]
+    B = data_HHD[HHD_PAIRS[item][1]]
+    # print(A.iloc[0], B.iloc[0])
+    # print(np.maximum(A, B).iloc[0])
+    data_HHD[key] = (A - B) / np.maximum(A, B) * 100
 
 YBT_ASSYMETRY_KEYS = ['ANT_ASYMMETRY', 'PM_ASYMMETRY', 'PL_ASYMMETRY', 'COMPOSITE_ASYMMETRY']
 HHD_ASSYMETRY_KEYS = ['PS_ASYMMETRY', 'CZ_ASYMMETRY', 'DW_ASYMMETRY', 'BR_ASYMMETRY']
@@ -471,3 +481,15 @@ for key in YBT_ASSYMETRY_KEYS:
 for key in HHD_ASSYMETRY_KEYS:
     perform_ttest_or_mannwhitney(data_HHD, 'Injury_History_MoreThanOne (0=no,1=yes)', key)
 # %%
+top_5_sports = data_pure["Sport"].value_counts().nlargest(5).index
+data_top_5 = data_pure[data_pure["Sport"].isin(top_5_sports)]
+keys = ['Sex', 'Sports_Specialization', 'Geographic_Factor', 'Dominant_extremity', 'Injury_History', 'Injury_History_MoreThanOne (0=no,1=yes)']
+for key in keys:
+    print(data_top_5.groupby("Sport")[key].value_counts())
+    print(round(data_top_5.groupby("Sport")[key].value_counts(normalize=True), 2))
+
+# %%
+keys = ['Chronologic_Age', 'Experience_main_sport', 'Training_Volume_Weekly_MainSport', 'Training_Volume_Weekly_ALLSports']
+for key in keys:
+    print(round(data_top_5.groupby("Sport")[key].mean(),2))
+    print(round(data_top_5.groupby("Sport")[key].std(), 2))
