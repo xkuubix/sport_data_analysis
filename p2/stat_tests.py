@@ -55,15 +55,20 @@ columns_to_get = [
     ]
 
 # Hand Held Dynamometry
+# PL => ENG acronyms
+#  PŚ => HAbd
+#  CZ => KE
+#  DW => KF
+#  BR => AF
 HHD = [
-    'PS_L_PEAK_FORCE',
-    'PS_R_PEAK_FORCE',
-    'CZ_L_PEAK_FORCE',
-    'CZ_R_PEAK_FORCE',
-    'DW_L_PEAK_FORCE',
-    'DW_R_PEAK_FORCE',
-    'BR_L_PEAK_FORCE',
-    'BR_R_PEAK_FORCE'
+    'HAbd_L_PEAK_FORCE',
+    'HAbd_R_PEAK_FORCE',
+    'KE_L_PEAK_FORCE',
+    'KE_R_PEAK_FORCE',
+    'KF_L_PEAK_FORCE',
+    'KF_R_PEAK_FORCE',
+    'AF_L_PEAK_FORCE',
+    'AF_R_PEAK_FORCE'
     ]
 
 # Y Balance Test
@@ -107,16 +112,15 @@ data_FMS = process_data(data_FMS)
 def assign_dominant_extremity(row, left_col, right_col):
     return row[left_col] if row['Dominant_extremity'] == 'Left' else row[right_col]
 
+data_HHD['HAbd_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='HAbd_L_PEAK_FORCE', right_col='HAbd_R_PEAK_FORCE', axis=1)
+data_HHD['KE_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='KE_L_PEAK_FORCE', right_col='KE_R_PEAK_FORCE', axis=1)
+data_HHD['KF_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='KF_L_PEAK_FORCE', right_col='KF_R_PEAK_FORCE', axis=1)
+data_HHD['AF_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='AF_L_PEAK_FORCE', right_col='AF_R_PEAK_FORCE', axis=1)
 
-data_HHD['PS_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='PS_L_PEAK_FORCE', right_col='PS_R_PEAK_FORCE', axis=1)
-data_HHD['CZ_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='CZ_L_PEAK_FORCE', right_col='CZ_R_PEAK_FORCE', axis=1)
-data_HHD['DW_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='DW_L_PEAK_FORCE', right_col='DW_R_PEAK_FORCE', axis=1)
-data_HHD['BR_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='BR_L_PEAK_FORCE', right_col='BR_R_PEAK_FORCE', axis=1)
-
-data_HHD['PS_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='PS_L_PEAK_FORCE', left_col='PS_R_PEAK_FORCE', axis=1)
-data_HHD['CZ_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='CZ_L_PEAK_FORCE', left_col='CZ_R_PEAK_FORCE', axis=1)
-data_HHD['DW_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='DW_L_PEAK_FORCE', left_col='DW_R_PEAK_FORCE', axis=1)
-data_HHD['BR_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='BR_L_PEAK_FORCE', left_col='BR_R_PEAK_FORCE', axis=1)
+data_HHD['HAbd_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='HAbd_L_PEAK_FORCE', left_col='HAbd_R_PEAK_FORCE', axis=1)
+data_HHD['KE_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='KE_L_PEAK_FORCE', left_col='KE_R_PEAK_FORCE', axis=1)
+data_HHD['KF_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='KF_L_PEAK_FORCE', left_col='KF_R_PEAK_FORCE', axis=1)
+data_HHD['AF_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='AF_L_PEAK_FORCE', left_col='AF_R_PEAK_FORCE', axis=1)
 
 
 data_YBT['YBT_ANT_DOMINANT'] = data_YBT.apply(assign_dominant_extremity, left_col='YBT_ANT_L_Normalized', right_col='YBT_ANT_R_Normalized', axis=1)
@@ -130,14 +134,11 @@ data_YBT['YBT_PL_NONDOMINANT'] = data_YBT.apply(assign_dominant_extremity, right
 data_YBT['YBT_COMPOSITE_NONDOMINANT'] = data_YBT.apply(assign_dominant_extremity, right_col='YBT_COMPOSITE_L', left_col='YBT_COMPOSITE_R', axis=1)
 
 #%% tests
-
-# check data normality and homogeneity of variance
-
 YBT_KEYS = ['YBT_ANT_DOMINANT', 'YBT_PM_DOMINANT', 'YBT_PL_DOMINANT', 'YBT_COMPOSITE_DOMINANT',
             'YBT_ANT_NONDOMINANT', 'YBT_PM_NONDOMINANT', 'YBT_PL_NONDOMINANT', 'YBT_COMPOSITE_NONDOMINANT']
 
-HHD_KEYS = ['PS_DOMINANT_PEAK_FORCE', 'CZ_DOMINANT_PEAK_FORCE', 'DW_DOMINANT_PEAK_FORCE', 'BR_DOMINANT_PEAK_FORCE',
-            'PS_NONDOMINANT_PEAK_FORCE', 'CZ_NONDOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE']
+HHD_KEYS = ['HAbd_DOMINANT_PEAK_FORCE',    'KE_DOMINANT_PEAK_FORCE',    'KF_DOMINANT_PEAK_FORCE',    'AF_DOMINANT_PEAK_FORCE',
+            'HAbd_NONDOMINANT_PEAK_FORCE', 'KE_NONDOMINANT_PEAK_FORCE', 'KF_NONDOMINANT_PEAK_FORCE', 'AF_NONDOMINANT_PEAK_FORCE']
 
 FMS_KEYS = ['FMS_TOTAL']
 
@@ -429,10 +430,10 @@ YBT_PAIRS = [('YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT'),
             ('YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT'),
             ('YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT'),
             ('YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT')]
-HHD_PAIRS = [('PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE'),
-            ('CZ_DOMINANT_PEAK_FORCE', 'CZ_NONDOMINANT_PEAK_FORCE'),
-            ('DW_DOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE'),
-            ('BR_DOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE')]
+HHD_PAIRS = [('HAbd_DOMINANT_PEAK_FORCE', 'HAbd_NONDOMINANT_PEAK_FORCE'),
+            ('KE_DOMINANT_PEAK_FORCE', 'KE_NONDOMINANT_PEAK_FORCE'),
+            ('KF_DOMINANT_PEAK_FORCE', 'KF_NONDOMINANT_PEAK_FORCE'),
+            ('AF_DOMINANT_PEAK_FORCE', 'AF_NONDOMINANT_PEAK_FORCE')]
 
 paired_test(data_YBT, YBT_PAIRS)
 paired_test(data_HHD, HHD_PAIRS)
@@ -465,7 +466,7 @@ for item in range(0, len(HHD_PAIRS)):
     data_HHD[key] = (A - B) / np.maximum(A, B) * 100
 
 YBT_ASSYMETRY_KEYS = ['ANT_ASYMMETRY', 'PM_ASYMMETRY', 'PL_ASYMMETRY', 'COMPOSITE_ASYMMETRY']
-HHD_ASSYMETRY_KEYS = ['PS_ASYMMETRY', 'CZ_ASYMMETRY', 'DW_ASYMMETRY', 'BR_ASYMMETRY']
+HHD_ASSYMETRY_KEYS = ['HAbd_ASYMMETRY', 'KE_ASYMMETRY', 'KF_ASYMMETRY', 'AF_ASYMMETRY']
 
 multiple_means_and_post_hocs(data=data_YBT, keys=YBT_ASSYMETRY_KEYS, group_col='Sports_Specialization')
 multiple_means_and_post_hocs(data=data_HHD, keys=HHD_ASSYMETRY_KEYS, group_col='Sports_Specialization')
@@ -493,3 +494,4 @@ keys = ['Chronologic_Age', 'Experience_main_sport', 'Training_Volume_Weekly_Main
 for key in keys:
     print(round(data_top_5.groupby("Sport")[key].mean(),2))
     print(round(data_top_5.groupby("Sport")[key].std(), 2))
+# %%

@@ -58,15 +58,20 @@ columns_to_get = [
     ]
 
 # Hand Held Dynamometry
+# PL => ENG acronyms
+#  PŚ => HAbd
+#  CZ => KE
+#  DW => KF
+#  BR => AF
 HHD = [
-    'PS_L_PEAK_FORCE',
-    'PS_R_PEAK_FORCE',
-    'CZ_L_PEAK_FORCE',
-    'CZ_R_PEAK_FORCE',
-    'DW_L_PEAK_FORCE',
-    'DW_R_PEAK_FORCE',
-    'BR_L_PEAK_FORCE',
-    'BR_R_PEAK_FORCE'
+    'HAbd_L_PEAK_FORCE',
+    'HAbd_R_PEAK_FORCE',
+    'KE_L_PEAK_FORCE',
+    'KE_R_PEAK_FORCE',
+    'KF_L_PEAK_FORCE',
+    'KF_R_PEAK_FORCE',
+    'AF_L_PEAK_FORCE',
+    'AF_R_PEAK_FORCE'
     ]
 
 # Y Balance Test
@@ -181,15 +186,15 @@ def assign_dominant_extremity(row, left_col, right_col):
     return row[left_col] if row['Dominant_extremity'] == 'Left' else row[right_col]
 
 
-data_HHD['PS_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='PS_L_PEAK_FORCE', right_col='PS_R_PEAK_FORCE', axis=1)
-data_HHD['CZ_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='CZ_L_PEAK_FORCE', right_col='CZ_R_PEAK_FORCE', axis=1)
-data_HHD['DW_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='DW_L_PEAK_FORCE', right_col='DW_R_PEAK_FORCE', axis=1)
-data_HHD['BR_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='BR_L_PEAK_FORCE', right_col='BR_R_PEAK_FORCE', axis=1)
+data_HHD['HAbd_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='HAbd_L_PEAK_FORCE', right_col='HAbd_R_PEAK_FORCE', axis=1)
+data_HHD['KE_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='KE_L_PEAK_FORCE', right_col='KE_R_PEAK_FORCE', axis=1)
+data_HHD['KF_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='KF_L_PEAK_FORCE', right_col='KF_R_PEAK_FORCE', axis=1)
+data_HHD['AF_DOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, left_col='AF_L_PEAK_FORCE', right_col='AF_R_PEAK_FORCE', axis=1)
 
-data_HHD['PS_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='PS_L_PEAK_FORCE', left_col='PS_R_PEAK_FORCE', axis=1)
-data_HHD['CZ_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='CZ_L_PEAK_FORCE', left_col='CZ_R_PEAK_FORCE', axis=1)
-data_HHD['DW_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='DW_L_PEAK_FORCE', left_col='DW_R_PEAK_FORCE', axis=1)
-data_HHD['BR_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='BR_L_PEAK_FORCE', left_col='BR_R_PEAK_FORCE', axis=1)
+data_HHD['HAbd_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='HAbd_L_PEAK_FORCE', left_col='HAbd_R_PEAK_FORCE', axis=1)
+data_HHD['KE_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='KE_L_PEAK_FORCE', left_col='KE_R_PEAK_FORCE', axis=1)
+data_HHD['KF_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='KF_L_PEAK_FORCE', left_col='KF_R_PEAK_FORCE', axis=1)
+data_HHD['AF_NONDOMINANT_PEAK_FORCE'] = data_HHD.apply(assign_dominant_extremity, right_col='AF_L_PEAK_FORCE', left_col='AF_R_PEAK_FORCE', axis=1)
 
 
 data_YBT['YBT_ANT_DOMINANT'] = data_YBT.apply(assign_dominant_extremity, left_col='YBT_ANT_L_Normalized', right_col='YBT_ANT_R_Normalized', axis=1)
@@ -260,12 +265,12 @@ create_boxplot_4row(
     data=data_HHD, 
     id_var='Sports_Specialization', 
     value_vars_list=[
-        ['PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE'],
-        ['CZ_DOMINANT_PEAK_FORCE', 'CZ_NONDOMINANT_PEAK_FORCE'],
-        ['DW_DOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE'],
-        ['BR_DOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE']
+        ['HAbd_DOMINANT_PEAK_FORCE', 'HAbd_NONDOMINANT_PEAK_FORCE'],
+        ['KE_DOMINANT_PEAK_FORCE', 'KE_NONDOMINANT_PEAK_FORCE'],
+        ['KF_DOMINANT_PEAK_FORCE', 'KF_NONDOMINANT_PEAK_FORCE'],
+        ['AF_DOMINANT_PEAK_FORCE', 'AF_NONDOMINANT_PEAK_FORCE']
     ], 
-    row_labels=['HHD PS [kg]', 'HHD CZ [kg]', 'HHD DW [kg]', 'HHD BR [kg]'], 
+    row_labels=['HHD HAbd [kg]', 'HHD KE [kg]', 'HHD KF [kg]', 'HHD AF [kg]'], 
     hue_label='Dominant Extremity', 
     legend_labels=['Dominant', 'Nondominant'], 
     palette=["m", "g"], 
@@ -396,33 +401,33 @@ cat_box_plot(data_YBT, x=x,
 
 # %%
 cat_box_plot(data_HHD, x=x,
-                y1='PS_DOMINANT_PEAK_FORCE',
-                y2='PS_NONDOMINANT_PEAK_FORCE',
+                y1='HAbd_DOMINANT_PEAK_FORCE',
+                y2='HAbd_NONDOMINANT_PEAK_FORCE',
                 title1=title1,
                 title2=title2,
                 xlabel=xlabel,
-                ylabel='HHD PS [kg]')
+                ylabel='HHD HAbd [kg]')
 cat_box_plot(data_HHD, x=x,
-                y1='CZ_DOMINANT_PEAK_FORCE',
-                y2='CZ_NONDOMINANT_PEAK_FORCE',
+                y1='KE_DOMINANT_PEAK_FORCE',
+                y2='KE_NONDOMINANT_PEAK_FORCE',
                 title1=title1,
                 title2=title2,
                 xlabel=xlabel,
-                ylabel='HHD CZ [kg]')
+                ylabel='HHD KE [kg]')
 cat_box_plot(data_HHD, x=x,
-                y1='DW_DOMINANT_PEAK_FORCE',
-                y2='DW_NONDOMINANT_PEAK_FORCE',
+                y1='KF_DOMINANT_PEAK_FORCE',
+                y2='KF_NONDOMINANT_PEAK_FORCE',
                 title1=title1,
                 title2=title2,
                 xlabel=xlabel,
-                ylabel='HHD DW [kg]')
+                ylabel='HHD KF [kg]')
 cat_box_plot(data_HHD, x=x,
-                y1='BR_DOMINANT_PEAK_FORCE',
-                y2='BR_NONDOMINANT_PEAK_FORCE',
+                y1='AF_DOMINANT_PEAK_FORCE',
+                y2='AF_NONDOMINANT_PEAK_FORCE',
                 title1=title1,
                 title2=title2,
                 xlabel=xlabel,
-                ylabel='HHD BR [kg]')
+                ylabel='HHD AF [kg]')
 
 # %%
 #FMS
@@ -637,12 +642,12 @@ plot_dominant_vs_nondominant(data_YBT, x='Hours_per_week>Age',
                              xlabel=xlabel,
                              hue_label='Dominant Extremity')
 # %%
-y_vars = ['PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE',
-            'CZ_DOMINANT_PEAK_FORCE', 'CZ_NONDOMINANT_PEAK_FORCE',
-            'DW_DOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE',
-            'BR_DOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE']
+y_vars =['HAbd_DOMINANT_PEAK_FORCE', 'HAbd_NONDOMINANT_PEAK_FORCE',
+        'KE_DOMINANT_PEAK_FORCE', 'KE_NONDOMINANT_PEAK_FORCE',
+        'KF_DOMINANT_PEAK_FORCE', 'KF_NONDOMINANT_PEAK_FORCE',
+        'AF_DOMINANT_PEAK_FORCE', 'AF_NONDOMINANT_PEAK_FORCE']
 
-ylabels = ['HHD PS [kg]', 'HHD CZ [kg]', 'HHD DW [kg]', 'HHD BR [kg]']
+ylabels = ['HHD HAbd [kg]', 'HHD KE [kg]', 'HHD KF [kg]', 'HHD AF [kg]']
 plot_dominant_vs_nondominant(data_HHD, x='Hours_per_week>Age',
                              y_vars=y_vars, ylabels=ylabels,
                              xlabel=xlabel,
@@ -672,9 +677,9 @@ plt.show()
 # dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
 
 y_vars = ['YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT',
-            'YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT',
-            'YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT',
-            'YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT']
+          'YBT_PM_DOMINANT', 'YBT_PM_NONDOMINANT',
+          'YBT_PL_DOMINANT', 'YBT_PL_NONDOMINANT',
+          'YBT_COMPOSITE_DOMINANT', 'YBT_COMPOSITE_NONDOMINANT']
 
 ylabels = ['YBT ANT [%]', 'YBT PM [%]', 'YBT PL [%]', 'YBT COMP [%]']
 
@@ -689,12 +694,12 @@ plot_dominant_vs_nondominant(data_YBT, x='Injury_History_MoreThanOne (0=no,1=yes
                                 xlabel='Injury History More Than One (Yes/No)',
                                 hue_label='Dominant Extremity')
 
-y_vars = ['PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE',
-            'CZ_DOMINANT_PEAK_FORCE', 'CZ_NONDOMINANT_PEAK_FORCE',
-            'DW_DOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE',
-            'BR_DOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE']
+y_vars =['HAbd_DOMINANT_PEAK_FORCE', 'HAbd_NONDOMINANT_PEAK_FORCE',
+         'KE_DOMINANT_PEAK_FORCE', 'KE_NONDOMINANT_PEAK_FORCE',
+         'KF_DOMINANT_PEAK_FORCE', 'KF_NONDOMINANT_PEAK_FORCE',
+         'AF_DOMINANT_PEAK_FORCE', 'AF_NONDOMINANT_PEAK_FORCE']
 
-ylabels = ['HHD PS [kg]', 'HHD CZ [kg]', 'HHD DW [kg]', 'HHD BR [kg]']
+ylabels = ['HHD HAbd [kg]', 'HHD KE [kg]', 'HHD KF [kg]', 'HHD AF [kg]']
 plot_dominant_vs_nondominant(data_HHD, x='Injury_History',
                              y_vars=y_vars, ylabels=ylabels,
                              xlabel='Injury History (Yes/No)',
@@ -771,33 +776,33 @@ cat_box_plot(data_YBT, x=x,
              ylabel='YBT COMP [%]')
 # %%
 cat_box_plot(data_HHD, x=x,
-             y1='PS_DOMINANT_PEAK_FORCE',
-             y2='PS_NONDOMINANT_PEAK_FORCE',
+             y1='HAbd_DOMINANT_PEAK_FORCE',
+             y2='HAbd_NONDOMINANT_PEAK_FORCE',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
-             ylabel='HHD PS [kg]')
+             ylabel='HHD HAbd [kg]')
 cat_box_plot(data_HHD, x=x,
-             y1='CZ_DOMINANT_PEAK_FORCE',
-             y2='CZ_NONDOMINANT_PEAK_FORCE',
+             y1='KE_DOMINANT_PEAK_FORCE',
+             y2='KE_NONDOMINANT_PEAK_FORCE',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
-             ylabel='HHD CZ [kg]')
+             ylabel='HHD KE [kg]')
 cat_box_plot(data_HHD, x=x,
-             y1='DW_DOMINANT_PEAK_FORCE',
-             y2='DW_NONDOMINANT_PEAK_FORCE',
+             y1='KF_DOMINANT_PEAK_FORCE',
+             y2='KF_NONDOMINANT_PEAK_FORCE',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
-             ylabel='HHD DW [kg]')
+             ylabel='HHD KF [kg]')
 cat_box_plot(data_HHD, x=x,
-             y1='BR_DOMINANT_PEAK_FORCE',
-             y2='BR_NONDOMINANT_PEAK_FORCE',
+             y1='AF_DOMINANT_PEAK_FORCE',
+             y2='AF_NONDOMINANT_PEAK_FORCE',
              title1=title1,
              title2=title2,
              xlabel=xlabel,
-             ylabel='HHD BR [kg]')
+             ylabel='HHD AF [kg]')
 
 #FMS
 fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
@@ -911,34 +916,33 @@ cat_box_plot(data_YBT, x=x,
 # %%
 
 cat_box_plot(data_HHD, x=x,
-                y1='PS_DOMINANT_PEAK_FORCE',
-                y2='PS_NONDOMINANT_PEAK_FORCE',
-                title1=title1,
-                title2=title2,
-                xlabel=xlabel,
-                ylabel='HHD PS [kg]')
+             y1='HAbd_DOMINANT_PEAK_FORCE',
+             y2='HAbd_NONDOMINANT_PEAK_FORCE',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='HHD HAbd [kg]')
 cat_box_plot(data_HHD, x=x,
-                y1='CZ_DOMINANT_PEAK_FORCE',
-                y2='CZ_NONDOMINANT_PEAK_FORCE',
-                title1=title1,
-                title2=title2,
-                xlabel=xlabel,
-                ylabel='HHD CZ [kg]')
+             y1='KE_DOMINANT_PEAK_FORCE',
+             y2='KE_NONDOMINANT_PEAK_FORCE',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='HHD KE [kg]')
 cat_box_plot(data_HHD, x=x,
-                y1='DW_DOMINANT_PEAK_FORCE',
-                y2='DW_NONDOMINANT_PEAK_FORCE',
-                title1=title1,
-                title2=title2,
-                xlabel=xlabel,
-                ylabel='HHD DW [kg]')
+             y1='KF_DOMINANT_PEAK_FORCE',
+             y2='KF_NONDOMINANT_PEAK_FORCE',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='HHD KF [kg]')
 cat_box_plot(data_HHD, x=x,
-                y1='BR_DOMINANT_PEAK_FORCE',
-                y2='BR_NONDOMINANT_PEAK_FORCE',
-                title1=title1,
-                title2=title2,
-                xlabel=xlabel,
-                ylabel='HHD BR [kg]')
-
+             y1='AF_DOMINANT_PEAK_FORCE',
+             y2='AF_NONDOMINANT_PEAK_FORCE',
+             title1=title1,
+             title2=title2,
+             xlabel=xlabel,
+             ylabel='HHD AF [kg]')
 # %%
 fms_box_plot(data_FMS, x=x, y='FMS_TOTAL', title=title, xlabel=xlabel, ylabel=ylabel)
 
@@ -1017,12 +1021,12 @@ ylabels = ['YBT ANT [%]', 'YBT PM [%]', 'YBT PL [%]', 'YBT COMP [%]', 'YBT']
 draw_box_plots(data_YBT, pairs, ylabels)
 
 pairs = [
-    ('PS_DOMINANT_PEAK_FORCE', 'PS_NONDOMINANT_PEAK_FORCE'),
-    ('CZ_DOMINANT_PEAK_FORCE', 'CZ_NONDOMINANT_PEAK_FORCE'),
-    ('DW_DOMINANT_PEAK_FORCE', 'DW_NONDOMINANT_PEAK_FORCE'),
-    ('BR_DOMINANT_PEAK_FORCE', 'BR_NONDOMINANT_PEAK_FORCE')
+    ('HAbd_DOMINANT_PEAK_FORCE', 'HAbd_NONDOMINANT_PEAK_FORCE'),
+    ('KE_DOMINANT_PEAK_FORCE', 'KE_NONDOMINANT_PEAK_FORCE'),
+    ('KF_DOMINANT_PEAK_FORCE', 'KF_NONDOMINANT_PEAK_FORCE'),
+    ('AF_DOMINANT_PEAK_FORCE', 'AF_NONDOMINANT_PEAK_FORCE')
 ]
-ylabels = ['HHD PS [kg]', 'HHD CZ [kg]', 'HHD DW [kg]', 'HHD BR [kg]', 'HHD']
+ylabels = ['HHD HAbd [kg]', 'HHD KE [kg]', 'HHD KF [kg]', 'HHD AF [kg]', 'HHD']
 draw_box_plots(data_HHD, pairs, ylabels)
 
 # %%

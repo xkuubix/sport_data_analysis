@@ -45,14 +45,19 @@ def rename_columns(data):
     data.rename(columns={'Maturity_Offset (years)': 'Maturity_Offset'}, inplace=True)
 
     # Sport performance
-    data.rename(columns={'PŚ_L PEAK FORCE (KG) Normalized to body weight Raw': 'PS_L_PEAK_FORCE'}, inplace=True)
-    data.rename(columns={'PŚ_P PEAK FORCE (KG) Normalized to body weight Raw': 'PS_R_PEAK_FORCE'}, inplace=True)
-    data.rename(columns={'CZ_L PEAK FORCE (KG) Normalized to body weight Raw': 'CZ_L_PEAK_FORCE'}, inplace=True)
-    data.rename(columns={'CZ_P PEAK FORCE (KG) Normalized to body weight Raw': 'CZ_R_PEAK_FORCE'}, inplace=True)
-    data.rename(columns={'DW_L PEAK FORCE(KG) Normalized to body weight Raw':  'DW_L_PEAK_FORCE'}, inplace=True)
-    data.rename(columns={'DW_P PEAK FORCE (KG) Normalized to body weight Raw': 'DW_R_PEAK_FORCE'}, inplace=True)
-    data.rename(columns={'BR_L PEAK FORCE (KG) Normalized to body weight Raw': 'BR_L_PEAK_FORCE'}, inplace=True)
-    data.rename(columns={'BR_P_PEAK_FORCE_(KG)_Normalized_to_body_weight Raw': 'BR_R_PEAK_FORCE'}, inplace=True)
+    # PL => ENG acronyms
+    #  PŚ => HAbd
+    #  CZ => KE
+    #  DW => KF
+    #  BR => AF
+    data.rename(columns={'PŚ_L PEAK FORCE (KG) Normalized to body weight Raw': 'HAbd_L_PEAK_FORCE'}, inplace=True)
+    data.rename(columns={'PŚ_P PEAK FORCE (KG) Normalized to body weight Raw': 'HAbd_R_PEAK_FORCE'}, inplace=True)
+    data.rename(columns={'CZ_L PEAK FORCE (KG) Normalized to body weight Raw': 'KE_L_PEAK_FORCE'}, inplace=True)
+    data.rename(columns={'CZ_P PEAK FORCE (KG) Normalized to body weight Raw': 'KE_R_PEAK_FORCE'}, inplace=True)
+    data.rename(columns={'DW_L PEAK FORCE(KG) Normalized to body weight Raw':  'KF_L_PEAK_FORCE'}, inplace=True)
+    data.rename(columns={'DW_P PEAK FORCE (KG) Normalized to body weight Raw': 'KF_R_PEAK_FORCE'}, inplace=True)
+    data.rename(columns={'BR_L PEAK FORCE (KG) Normalized to body weight Raw': 'AF_L_PEAK_FORCE'}, inplace=True)
+    data.rename(columns={'BR_P_PEAK_FORCE_(KG)_Normalized_to_body_weight Raw': 'AF_R_PEAK_FORCE'}, inplace=True)
     columns_after = [col for col in data.columns]
     for i, (before, after) in enumerate(zip(columns_before, columns_after)):
         if before != after:
@@ -114,8 +119,8 @@ def correct_dtype(data):
             data.iloc[:, data.columns.get_loc(col)] = pd.to_numeric(data[col], errors='coerce')
 
     peak_force_columns = [
-        'PS_L_PEAK_FORCE', 'PS_R_PEAK_FORCE', 'CZ_L_PEAK_FORCE', 'CZ_R_PEAK_FORCE',
-        'DW_L_PEAK_FORCE', 'DW_R_PEAK_FORCE', 'BR_L_PEAK_FORCE', 'BR_R_PEAK_FORCE'
+        'HAbd_L_PEAK_FORCE', 'HAbd_R_PEAK_FORCE', 'KE_L_PEAK_FORCE', 'KE_R_PEAK_FORCE',
+        'KF_L_PEAK_FORCE', 'KF_R_PEAK_FORCE', 'AF_L_PEAK_FORCE', 'AF_R_PEAK_FORCE'
     ]
     for col in peak_force_columns:
         if col in data.columns:
