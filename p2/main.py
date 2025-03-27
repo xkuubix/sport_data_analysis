@@ -216,7 +216,7 @@ data_YBT['YBT_COMPOSITE_NONDOMINANT'] = data_YBT.apply(assign_dominant_extremity
 def create_boxplot_4row(data, id_var, value_vars_list, row_labels, hue_label, legend_labels, palette, order, x_label):
     sns.set_theme(style="ticks", palette="pastel")
 
-    fig, axes = plt.subplots(4, 1, figsize=(10, 10))
+    fig, axes = plt.subplots(4, 1, figsize=(8, 8))
 
     for i, value_vars in enumerate(value_vars_list):
         df_melted = data.melt(id_vars=id_var,
@@ -233,6 +233,11 @@ def create_boxplot_4row(data, id_var, value_vars_list, row_labels, hue_label, le
         ax.get_legend().remove()
         ax.get_xaxis().get_label().set_visible(False)
         ax.grid(axis='y')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        # ax.spines['bottom'].set_visible(False)
+        ax.tick_params(left=False, bottom=False)
 
     handles, _ = axes[0].get_legend_handles_labels()  # Get handles and labels from one of the plots
     fig.legend(handles, legend_labels, loc='lower center', title=hue_label,
@@ -244,7 +249,8 @@ def create_boxplot_4row(data, id_var, value_vars_list, row_labels, hue_label, le
     axes[3].set_xlabel(x_label)
     plt.tight_layout()
     plt.show()
-
+    # plt.savefig('/home/jr_buler/sport_analysis/figury_p2_final/hhd.svg', format='svg')
+#%%
 create_boxplot_4row(
     data=data_YBT, 
     id_var='Sports_Specialization', 
@@ -261,6 +267,7 @@ create_boxplot_4row(
     order=['low', 'moderate', 'high'], 
     x_label='Sports Specialization'
 )
+# %%
 create_boxplot_4row(
     data=data_HHD, 
     id_var='Sports_Specialization', 
@@ -367,8 +374,8 @@ title2 = 'Non Dominant Extremity'
 x = 'Training_Volume_Weekly_ALLSports'
 xlabel = 'Training Volume All Sports [hrs/week]'
 
-x = 'Training_Volume_Weekly_MainSport'
-xlabel = 'Training Volume Main Sport [hrs/week]'
+# x = 'Training_Volume_Weekly_MainSport'
+# xlabel = 'Training Volume Main Sport [hrs/week]'
 
 cat_box_plot(data_YBT, x=x,
              y1='YBT_ANT_DOMINANT',
@@ -606,7 +613,8 @@ linear_plot_fms(data_FMS, x='Training_Volume_Weekly_MainSport', y='FMS_TOTAL',
 # for more hours per week than their age (Yes/No) = Yes) będą wykazywać niższe wyniki w
 # Sports Performance Tests dla dominującej i niedominującej kończyny dolnej (YBT, HHD, FMS)
 def plot_dominant_vs_nondominant(data, x, y_vars, ylabels, xlabel, hue_label):
-    fig, axes = plt.subplots(2, 2, figsize=(12, 12))
+    sns.set_theme(style="ticks", palette="pastel")
+    fig, axes = plt.subplots(2, 2, figsize=(8, 8))
 
     for i, ax in enumerate(axes.flat):
         df_melted = data.melt(id_vars=[x],
@@ -616,18 +624,28 @@ def plot_dominant_vs_nondominant(data, x, y_vars, ylabels, xlabel, hue_label):
         sns.boxplot(x=x, y='Score', hue=hue_label, data=df_melted, ax=ax, showfliers=False,
                     gap=0.5, order=['No', 'Yes'])
         sns.stripplot(x=x, y='Score', hue=hue_label, data=df_melted, ax=ax,
-                      color=".3", dodge=True)
+                      color=".3", dodge=True, size=2)
         ax.set_ylabel(ylabels[i])
         ax.set_xlabel('')
         ax.grid(axis='y')
         ax.legend().remove()
-
+        # ax.tick_params(left=False, bottom=False)  # Remove ticks
+        # sns.despine(ax=ax)  # Remove frames
+        ax.get_xaxis().get_label().set_visible(False)
+        # ax.grid(axis='y')
+        # ax.spines['top'].set_visible(False)
+        # ax.spines['right'].set_visible(False)
+        # ax.spines['left'].set_visible(False)
+        # ax.spines['bottom'].set_visible(False)
+        ax.tick_params(left=False, bottom=False)
     handles, _ = axes[0, 0].get_legend_handles_labels()  # Get handles and labels from one of the plots
     fig.legend(handles, ['Dominant', 'Nondominant'], loc='lower center', title=hue_label,
                ncol=2, bbox_to_anchor=(0.5, 1), frameon=False)
-    fig.supxlabel(xlabel)
+    fig.supxlabel(xlabel, fontsize=12)
     plt.tight_layout()
     plt.show()
+    fig.savefig('/home/jr_buler/sport_analysis/figury_p2_final/ybt2.png', format='png', dpi=500)
+#%%
 
 y_vars = [
     'YBT_ANT_DOMINANT', 'YBT_ANT_NONDOMINANT',
