@@ -6,3 +6,5 @@ __pycache__/
 # Dependency directories
 /figury*/
 /p2/figury*/*
+/*figures*/
+dane*

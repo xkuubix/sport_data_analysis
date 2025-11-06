@@ -142,14 +142,14 @@ y = subset['Sports_numeric']    # Dependent variables
 
 
 X = X.rename(columns={"Chronologic_Age": "Chronologic age",
-                      "Experience_main_sport": "Experience main sport",
-                      "Training_Volume_Weekly_MainSport": "Weekly training volume main sport",
-                      "Training_Volume_Weekly_ALLSports": "Weekly training volume all sports",
-                      "Age_started_main_sport": "Age started main sport",
+                      "Experience_main_sport": "Experience in the main sport",
+                      "Training_Volume_Weekly_MainSport": "Training volume considering the main sport",
+                      "Training_Volume_Weekly_ALLSports": "Training volume considering all sports",
+                      "Age_started_main_sport": "Age at which main sport was started",
                       "Geographic_Factor": "Geographic factor",
                       "Sports_Specialization (points) (0-1 low, 2 moderate, 3 high)'": "Sports specialization",
                       "Spec_ordinal": "Sports specialization ordinal",
-                      "Hours_per_week>Age": "Exceeding main sport hours:age ratio",
+                      "Hours_per_week>Age": "Hours-to-age training rule",
                       "Injury_History": "Injury history",
                       "Injury_History_MoreThanOne (0=no,1=yes)": "Multiple injuries",
                       "Injury_History_Overuse_Acute": "Injury type",
@@ -235,7 +235,8 @@ shap.plots.bar(shap_values_log_odds, clustering=clustering)
 # %%
 plt.ion()
 fig, ax = plt.subplots()
-f = shap.heatmap_plot(shap_values_log_odds, show=False, ax=ax)
+
+f = shap.heatmap_plot(shap_values_log_odds, show=True, ax=ax, instance_order=shap_values_log_odds.sum(1))
 
 children = ax.get_children()
 for i, child in enumerate(children):

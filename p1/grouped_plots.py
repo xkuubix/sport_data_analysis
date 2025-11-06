@@ -114,6 +114,7 @@ ind = data[data["Sports"] == "individual"]
 team = data[data["Sports"] == "team"]
 
 # Create a figure and axes with 1 row and 3 columns
+# %%
 fig, axes = plt.subplots(1, 3, figsize=(14,6), dpi=100)
 
 # Plot 1: Sports Specialization
@@ -128,20 +129,20 @@ ind_spec = ind["Sports_Specialization"].value_counts()
 team_spec = team["Sports_Specialization"].value_counts()
 items = [ind_spec.low, team_spec.low, ind_spec.moderate, team_spec.moderate, ind_spec.high, team_spec.high]
 sums = [ind_spec.sum(), team_spec.sum()]
-i = 0
 for p in axes[0].patches:
-    if i in [0, 2, 4]:
-        perc = items[i] / sums[0] * 100
-    else:
-        perc = items[i] / sums[1] * 100
-    axes[0].annotate(f'{perc:.1f}%', (p.get_x() + p.get_width() / 2, p.get_height()), ha='center', va='bottom')
-    i += 1
+    height = p.get_height()
+    if height == 0:
+        continue
+    axes[0].annotate(f'{height:.1f}%', 
+                     (p.get_x() + p.get_width() / 2, height),
+                     ha='center', va='bottom')
+
 
 # Plot 2: Hours per Week vs Age
 x, y = 'Sports', 'Hours_per_week>Age'
 df2 = subset.groupby(x)[y].value_counts(normalize=True).mul(100).rename('Percent').reset_index()
 sns.barplot(x=x, y='Percent', hue=y, data=df2, hue_order=['Yes', 'No'], ax=axes[1])
-axes[1].set_title('Exceeding main sport hours:age ratio', fontdict={'fontsize': 14})
+axes[1].set_title('Hours-to-age training rule', fontdict={'fontsize': 14})
 axes[1].set_ylabel(None)
 
 # Annotate percentages
@@ -149,14 +150,14 @@ ind_more_hrs_than_age = ind["Hours_per_week>Age"].value_counts()
 team_more_hrs_than_age = team["Hours_per_week>Age"].value_counts()
 items = [ind_more_hrs_than_age.Yes, team_more_hrs_than_age.Yes, ind_more_hrs_than_age.No, team_more_hrs_than_age.No]
 sums = [ind_more_hrs_than_age.sum(), team_more_hrs_than_age.sum()]
-i = 0
+
 for p in axes[1].patches:
-    if i in [0, 2]:
-        perc = items[i] / sums[0] * 100
-    else:
-        perc = items[i] / sums[1] * 100
-    axes[1].annotate(f'{perc:.1f}%', (p.get_x() + p.get_width() / 2, p.get_height()), ha='center', va='bottom')
-    i += 1
+    height = p.get_height()
+    if height == 0:
+        continue
+    axes[1].annotate(f'{height:.1f}%', 
+                     (p.get_x() + p.get_width() / 2, height),
+                     ha='center', va='bottom')
 
 # Plot 3: Injury History
 x, y = 'Sports', 'Injury_History'
@@ -169,14 +170,14 @@ ind_injury_history = ind["Injury_History"].value_counts()
 team_injury_history = team["Injury_History"].value_counts()
 items = [ind_injury_history.Yes, team_injury_history.Yes, ind_injury_history.No, team_injury_history.No]
 sums = [ind_injury_history.sum(), team_injury_history.sum()]
-i = 0
+
 for p in axes[2].patches:
-    if i in [0, 2]:
-        perc = items[i] / sums[0] * 100
-    else:
-        perc = items[i] / sums[1] * 100
-    axes[2].annotate(f'{perc:.1f}%', (p.get_x() + p.get_width() / 2, p.get_height()), ha='center', va='bottom')
-    i += 1
+    height = p.get_height()
+    if height == 0:
+        continue
+    axes[2].annotate(f'{height:.1f}%', 
+                     (p.get_x() + p.get_width() / 2, height),
+                     ha='center', va='bottom')
 
 # Adjust layout
 def label_iterator():
@@ -193,10 +194,8 @@ for ax in axes:
     ax.set_ylabel(None)
     ax.yaxis.set_major_formatter(PercentFormatter(xmax=100))
 
-# line1 = plt.Line2D([0.335, 0.335], [0, 1], color="black", linewidth=2, transform=fig.transFigure)
-# line2 = plt.Line2D([0.665, 0.665], [0, 1], color="black", linewidth=2, transform=fig.transFigure)
-# fig.add_artist(line1)
-# fig.add_artist(line2)
+axes[1].legend(title='Exceeded')
+
 
 plt.tight_layout()
 plt.show()
@@ -205,24 +204,24 @@ plt.show()
 fig, axes = plt.subplots(2, 2, figsize=(12,8), dpi=100)
 
 # Plot 1: Age started main sport
-sns.boxplot(data=data, x="Age_started_main_sport", y="Sports", width=.6, order=['individual', 'team'], ax=axes[0, 0])
+sns.boxplot(data=data, x="Age_started_main_sport", y="Sports", width=.6, order=['individual', 'team'], ax=axes[0, 0], color='lightgray')
 sns.stripplot(data=data, x="Age_started_main_sport", y="Sports", size=4, linewidth=0.3, marker="o", alpha=0.5, color="black", order=['individual', 'team'], ax=axes[0, 0])
 axes[0, 0].xaxis.grid(True)
 axes[0, 0].set(ylabel="")
 sns.despine(trim=True, left=True, ax=axes[0, 0])
 
-g = sns.violinplot(data=subset, x="Age_started_main_sport", y="Sports", hue="Sex", split=True, hue_order=['Male', 'Female'], order=['individual', 'team'], ax=axes[0, 1])
+g = sns.violinplot(data=subset, x="Age_started_main_sport", y="Sports", hue="Sex", split=True, hue_order=['Male', 'Female'], order=['individual', 'team'], ax=axes[0, 1], inner=None)
 g.set(yticklabels=[])  # remove the tick labels
 g.set(xlabel=None)  # remove the axis label
 
 # Plot 2: Training Volume Weekly Main Sport
-sns.boxplot(data=data, x="Training_Volume_Weekly_MainSport", y="Sports", width=.6, order=['individual', 'team'], ax=axes[1, 0])
+sns.boxplot(data=data, x="Training_Volume_Weekly_MainSport", y="Sports", width=.6, order=['individual', 'team'], ax=axes[1, 0], color='lightgray')
 sns.stripplot(data=data, x="Training_Volume_Weekly_MainSport", y="Sports", size=4, linewidth=0.3, marker="o", alpha=0.5, color="black", order=['individual', 'team'], ax=axes[1, 0])
 axes[1, 0].xaxis.grid(True)
 axes[1, 0].set(ylabel="")
 sns.despine(trim=True, left=True, ax=axes[0, 1])
 
-g = sns.violinplot(data=subset, x="Training_Volume_Weekly_MainSport", y="Sports", hue="Sex", split=True, hue_order=['Male', 'Female'], order=['individual', 'team'], ax=axes[1, 1])
+g = sns.violinplot(data=subset, x="Training_Volume_Weekly_MainSport", y="Sports", hue="Sex", split=True, hue_order=['Male', 'Female'], order=['individual', 'team'], ax=axes[1, 1], inner=None)
 g.set(yticklabels=[])  # remove the tick labels
 g.set(xlabel=None)  # remove the axis label
 
@@ -241,17 +240,15 @@ axes[0, 0].set_title(None)
 axes[0, 1].set_title(None)
 axes[1, 0].set_title(None)
 axes[1, 1].set_title(None)
-# line = plt.Line2D((0, 1), (0.5, 0.5), color="black", linewidth=2, transform=fig.transFigure, figure=fig)
-# line2 = plt.Line2D([0.5, 0.5], [0, 1], color="black", linestyle=':', linewidth=1, transform=fig.transFigure)
-# fig.add_artist(line)
+
 
 legend = axes[0, 1].get_legend()
 legend.set_title(None)
 legend = axes[1, 1].get_legend()
 legend.set_title(None)
 
-fig.text(0.5, 0.99, 'Age started main sport', ha='center', va='top', fontsize=16)
-fig.text(0.5, 0.49, 'Weekly training volume main sport in hours', ha='center', va='top', fontsize=16)
+fig.text(0.5, 0.99, 'Age at which main sport was started [years]', ha='center', va='top', fontsize=16)
+fig.text(0.5, 0.49, 'Training volume considering the main sport [hrs]', ha='center', va='top', fontsize=16)
 # Adjust layout
 plt.tight_layout()
 fig.subplots_adjust(top=0.95, hspace=0.25)  # Adjust hspace to increase/decrease spacing between rows
